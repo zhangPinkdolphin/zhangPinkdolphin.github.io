@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GA-SOP 体系深度解码 — zhangPinkdolphin</title>
+<style>
+  :root {
+    --bg: #0a0a14; --card: #12121f; --surface: #1a1a2e;
+    --border: #1e1e32; --text: #d0d0e0; --muted: #6b6b8a;
+    --accent: #667eea; --accent2: #764ba2; --green: #4ade80;
+    --amber: #fbbf24; --red: #f87171; --blue: #60a5fa;
+    --purple: #bc8cff; --orange: #fb923c;
+    --code-bg: #060610;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.8; }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+         background: rgba(10,10,20,0.85); backdrop-filter: blur(12px);
+         border-bottom: 1px solid var(--border); padding: 14px 40px;
+         display: flex; align-items: center; gap: 12px; }
+  .nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .nav a:hover { color: var(--accent); }
+  .nav .sep { color: var(--border); }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  .article-body { padding: 100px 0 40px; }
+  h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2));
+       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+       margin-bottom: 0.3em; line-height: 1.3; }
+  h2 { font-size: 1.5rem; color: var(--accent); margin: 1.8em 0 0.6em;
+       border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+  h3 { font-size: 1.15rem; color: var(--green); margin: 1.2em 0 0.4em; }
+  h4 { font-size: 1rem; color: var(--amber); margin: 0.8em 0 0.3em; }
+  p { margin: 0.6em 0; color: var(--text); }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 2em; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+        padding: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 1em 0; }
+  code { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; }
+  p > code, li > code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  .card, .section-card { background: var(--card); border: 1px solid var(--border);
+                         border-radius: 12px; padding: 20px; margin: 1em 0; }
+  .tag, .badge { display: inline-block; background: rgba(102,126,234,0.12); color: var(--accent);
+                 padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; margin: 2px 4px 2px 0; }
+  ul, ol { padding-left: 1.5em; margin: 0.5em 0; }
+  li { margin: 0.3em 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9rem; }
+  th { text-align: left; padding: 10px 12px; background: rgba(102,126,234,0.08);
+       border-bottom: 1px solid var(--border); color: var(--accent); font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  blockquote { border-left: 3px solid var(--accent); background: rgba(102,126,234,0.06);
+               padding: 12px 16px; margin: 1em 0; border-radius: 0 8px 8px 0; }
+  blockquote p { color: #b0b0c8; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+         padding: 20px 24px; margin-bottom: 32px; }
+  .toc a { display: block; padding: 3px 0; font-size: 0.9rem; }
+  .footer { text-align: center; padding: 60px 0 40px; color: var(--muted); font-size: 0.85rem; }
+  img { max-width: 100%; border-radius: 8px; }
+  @media (max-width: 640px) { .nav { padding: 12px 16px; } h1 { font-size: 1.5rem; } .container { padding: 0 16px; } }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="/">← 首页</a>
+  <span class="sep">/</span>
+  <span style="color:var(--muted);font-size:0.9rem;">GA-SOP 体系深度解码</span>
+</div>
+<div class="container">
+  <div class="article-body">
+<h1>🧠 GA-SOP 体系深度解码</h1>
+<p class="meta">从源码到架构的全景学习指南 · 基于 memory/ 目录 20+ 核心 SOP 源码分析 · 2026-05-27</p>
+
+<div class="toc">
+<h3>📑 目录</h3>
+<a href="#sec1">一、GA Agent 核心系列 — 自主行动框架</a>
+<a href="#sec1" class="l2">1.1 自主行动 (autonomous_operation_sop)</a>
+<a href="#sec1" class="l2">1.2 开放目标模式 (goal_mode_sop)</a>
+<a href="#sec1" class="l2">1.3 多步骤计划模式 (plan_sop)</a>
+<a href="#sec1" class="l2">1.4 监察者模式 (supervisor_sop)</a>
+<a href="#sec1" class="l2">1.5 验证协议 (verify_sop)</a>
+<a href="#sec1" class="l2">1.6 Code Review 模式 (review_sop)</a>
+<a href="#sec1" class="l3">1.7 四层记忆治理 (memory_management_sop)</a>
+<a href="#sec1" class="l3">1.8 进程记忆扫描 (procmem_scanner)</a>
+<a href="#sec1" class="l3">1.9 执行反思 (reflection_sop)</a>
+<a href="#sec1" class="l3">1.10 定时任务 (scheduled_task_sop)</a>
+<a href="#sec1" class="l3">1.11 Subagent 调用 (subagent.md)</a>
+<a href="#sec2">二、浏览器/自动化系列</a>
+<a href="#sec2" class="l2">2.1 TMWebDriver — 浏览器接管引擎</a>
+<a href="#sec2" class="l2">2.2 ljqCtrl — 物理键鼠工具</a>
+<a href="#sec2" class="l2">2.3 Vision API — 视觉理解</a>
+<a href="#sec2" class="l2">2.4 Vue3 组件操作破解</a>
+<a href="#sec2" class="l2">2.5 CDP 桥 — Chrome DevTools Protocol</a>
+<a href="#sec3">三、电商/数据采集系列</a>
+<a href="#sec3" class="l2">3.1 CakeResume 采集 (cakecollect)</a>
+<a href="#sec3" class="l2">3.2 兴趣数据采集</a>
+<a href="#sec3" class="l2">3.3 投稿/评审体系</a>
+<a href="#sec4">四、认知设计理念</a>
+<a href="#sec5">五、总纲：如果要写，怎么写？</a>
+</div>
+
+<!-- ===================== 第一章 ===================== -->
+<h2 id="sec1">一、🧠 GA Agent 核心系列（约 25 个 SOP）</h2>
+
+<div class="summary-box">
+<strong>总体画像：</strong>GA 的核心不是"一个 Agent"，而是一套<strong>元认知操作系统</strong>——通过 SOP 将 LLM 的思考过程结构化，把"AI 随机推理"变成"可预期、可控制、可复现的执行流水线"。
+</div>
+
+<!-- 1.1 自主行动 -->
+<h3 id="sec1.1">1.1 自主行动框架 (autonomous_operation_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>让 Agent 在用户离线时<strong>自主规划→执行→报告</strong>的完整闭环。核心是"写 TODO → 选一条 → 执行 → 写报告 → 记历史 → 结束"的循环。</p>
+
+<p><span class="why">为什么：</span>用户不可能 24h 盯着 Agent。需要 Agent 在没有人类监督时，能自己找活干、自己评估价值、自己记录成果。核心价值公式：<code>「AI训练数据无法覆盖」×「对未来协作有持久收益」</code>。</p>
+
+<p><span class="how">代码实现：</span></p>
+<ul>
+  <li><strong>入口</strong>：<code>autonomous_operation_sop.md</code> 定义了完整流程</li>
+  <li><strong>工具脚本</strong>：<code>helper.py</code> 提供了 4 个核心 API：
+    <ul>
+      <li><code>get_todo()</code> — 从 <code>TODO.txt</code> 读取待办列表</li>
+      <li><code>get_history(n)</code> — 从 <code>history.txt</code> 读最近 n 条历史</li>
+      <li><code>complete_task()</code> — 自动编号报告(R{NN})、移入 <code>autonomous_reports/</code>、prepend 历史行</li>
+      <li><code>set_todo()</code> — 返回 TODO.txt 路径</li>
+    </ul>
+  </li>
+  <li><strong>路径自动计算</strong>：基于模块位置 <code>__file__.resolve().parent</code> 定位 <code>temp/</code>、<code>memory/</code>、<code>autonomous_reports/</code></li>
+  <li><strong>报告编号</strong>：<code>_next_report_number()</code> 通过正则 <code>R(\d+)</code> 扫描历史文件取最大号+1</li>
+  <li><strong>历史回滚</strong>：写入 history.txt 失败时自动回滚（移回报告文件）</li>
+</ul>
+
+<pre>
+# 典型自主行动流程
+┌─────────────────────────────────────────────────┐
+│ ① update_working_checkpoint 设置上下文           │
+│ ② helper.get_history(40) + get_todo() 了解现状   │
+│ ③ 选一条 TODO（不连续两次选相同子任务）            │
+│ ④ 执行（≤30回合，小步快跑）                      │
+│ ⑤ 收尾：重读SOP → 写报告 → complete_task()      │
+│    → set_todo() 标记[x] → 结束                    │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>"第一条选 TODO，做完就停"</strong> — 避免 Agent 陷入无止境执行</li>
+  <li><strong>三权分离</strong>：规划（task_planning.md）≠ 执行（TODO 循环）≠ 验证（subagent 评审）</li>
+  <li><strong>报告+历史双轨</strong>：报告给人读，历史给 Agent 读，各司其职</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>我会用 Python <code>pathlib</code> 做路径管理，<code>re</code> 做报告编号提取，写 4 个纯函数。核心设计是<strong>幂等性</strong>——complete_task 可以重复调用不炸，历史写入有回滚。</p>
+</div>
+
+<!-- 1.2 开放目标模式 -->
+<h3 id="sec1.2">1.2 开放目标模式 (goal_mode_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>让 Agent <strong>长时间后台运行</strong>的模式——用户说"花 3 小时持续优化 X"，Agent 在后台一直跑，直到时间预算耗尽。</p>
+
+<p><span class="why">为什么：</span>有的事情不是一次能做完的（比如持续优化、巡检、学习）。需要一个长期在后台跑、知道自己还有多少预算、时间到了自动收尾的 Agent。</p>
+
+<p><span class="how">代码实现：</span></p>
+<ul>
+  <li>状态文件：<code>temp/goal_state.json</code>，含 <code>objective</code>、<code>budget_seconds</code>、<code>start_time</code>、<code>turns_used</code>、<code>status</code></li>
+  <li>启动：<code>start /b python agentmain.py --reflect reflect/goal_mode.py</code>（后台进程）</li>
+  <li>多实例：通过环境变量 <code>GOAL_STATE</code> 指定不同的状态文件</li>
+  <li>预算耗尽时自动进入"收口轮"然后停止</li>
+</ul>
+
+<pre>
+# goal_state.json 结构
+{
+  "objective": "用户原话目标",
+  "budget_seconds": 10800,
+  "start_time": 1745726400.0,
+  "turns_used": 0,
+  "max_turns": 200,
+  "status": "running",
+  "done_prompt": ""
+}
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>状态外化</strong>— 所有运行状态写入 JSON 文件，而非留在内存。主进程挂了也能恢复</li>
+  <li><strong>预算控制</strong>— <code>budget_seconds + max_turns</code> 双重限制，防止无限循环</li>
+  <li><strong>多实例</strong>— 环境变量注入配置，一个代码跑多个 Agent</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>关键在于<strong>状态文件的设计</strong>——把 "running/paused/stopped" 状态机和预算消耗逻辑分离。用 <code>atexit</code> 注册收尾函数，确保异常退出也能保存断点。</p>
+</div>
+
+<!-- 1.3 多步骤计划模式 -->
+<h3 id="sec1.3">1.3 多步骤计划模式 (plan_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>3 步以上复杂任务的<strong>结构化执行框架</strong>。三个阶段：探索态(了解环境) → 执行态(按 plan.md 分步执行) → 验证态(subagent 独立验证)。</p>
+
+<p><span class="why">为什么：</span>Agent 容易"一根筋"——拿到任务直接干，不先探测环境、不做计划、做完不验证。plan_sop 强制 Agent 先探索、再计划、再执行、再验证，是一个<strong>认知强制流程</strong>。</p>
+
+<p><span class="how">代码实现（262 行 SOP，含完整协议）：</span></p>
+<ul>
+  <li><strong>探索态</strong>：必须是 subagent 探测（主 agent 禁直接执行），结果写 <code>plan_XXX/exploration_findings.md</code></li>
+  <li><strong>计划编写</strong>：主 agent 根据 findings 写 plan.md，步骤格式 <code>[ ] / [D] / [VERIFY]</code></li>
+  <li><strong>执行态</strong>：循环读 plan.md → 找第一个 <code>[ ]</code> → 执行 → <code>file_patch</code> 标记 <code>[✓]</code> → 继续</li>
+  <li><strong>验证态</strong>：启动独立 subagent，给 verify_context.json（含任务描述/交付物清单/必做检查），做对抗性验证</li>
+  <li><strong>终止检查</strong>：file_read 全文扫描确认 0 个 <code>[ ]</code> 残留</li>
+  <li><strong>动态委托</strong>：执行中遇到 >3 文件/需调试/需浏览网页时，自动委托 subagent</li>
+</ul>
+
+<pre>
+# plan.md 格式
+## 步骤
+- [ ] P0: 探测环境 (subagent)
+  task: xxx
+- [✓] 安装依赖
+  task: pip install xxx
+- [VERIFY] 验证结果
+  task: 启动验证subagent
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>纯文本协议</strong>— plan.md 就是 Markdown checklist，人类和 Agent 都能读</li>
+  <li><strong>三态分离</strong>— 探索/执行/验证 三个心智模式绝不混在一起</li>
+  <li><strong>强制验证</strong>— "主 agent 有确认偏误，易被表面成功迷惑"，所以必须独立 subagent 验证</li>
+  <li><strong>动态委托</strong>— 执行中遇到复杂度超限，不硬扛，立即委托 subagent</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>不需要框架代码。核心就是<strong>一个 plan.md 文件 + 一个读取-执行-标记循环</strong>。我会用正则 <code>\[ \]</code> 检测待办，<code>file_patch</code> 标记完成，<code>re.search</code> 做终止检查。最难的部分是"探索态必须用 subagent"的自律约束——需要 Constitution 级别的硬编码。</p>
+</div>
+
+<!-- 1.4 监察者模式 -->
+<h3 id="sec1.4">1.4 监察者模式 (supervisor_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>一个<strong>只读、只判断、只干预</strong>的角色。它看着工作 Agent 干活，有问题才说话。</p>
+
+<p><span class="why">为什么：</span>Agent 干活时会"沉浸"——忘记约束、跳步、光说不做。需要一个外部的"监工"角色，保持对 SOP 和约束的清醒认知。</p>
+
+<p><span class="how">实现方式：</span>这不是代码实现，而是一个<strong>角色 SOP</strong>。关键机制：</p>
+<ul>
+  <li>启动时读 SOP，提取约束清单（<code>⚠️/禁止/必须/格式要求</code>）</li>
+  <li>监控循环：轮询 output.txt → 判断步骤 → 对照清单 → 需要时 <code>_intervene</code> 或 <code>_keyinfo</code></li>
+  <li>干预文件：<code>_intervene</code>（纠偏指令）、<code>_keyinfo</code>（预注入细节）</li>
+  <li>"沉默为主"——没问题不说话，说话一句话</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>监控而非执行</strong>— 清晰的角色边界，"你是挑刺的监工，不是干活的工人"</li>
+  <li><strong>干预粒度</strong>— 跳步/遗漏/光说不做/断言无据 等都有对应措辞</li>
+  <li><strong>预注入</strong>— 在工作 Agent 到达某步之前提前塞细节，而不是等犯错再纠正</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>这不是代码问题，而是<strong>提示词工程</strong>。核心是写一个"监工角色定义"+ 一张干预条件表。关键设计决策：干预的触发条件要具体（不是"感觉不对"而是"跳步/遗漏/断言无据"）。</p>
+</div>
+
+<!-- 1.5 验证协议 -->
+<h3 id="sec1.5">1.5 验证协议 (verify_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>对抗性验证协议——<strong>"能跑的必须跑，能看的必须看"</strong>。不是读代码验证，而是执行验证。</p>
+
+<p><span class="why">为什么：</span>代码审查和测试都是 LLM 写的，可能全是 mock 和 happy path。需要独立第三方做<strong>工具驱动的验证</strong>。</p>
+
+<p><span class="how">协议设计：</span></p>
+<ul>
+  <li><strong>两个失败模式</strong>：验证回避（读代码就说 PASS）+ 被前 80% 迷惑（忽视最后 20% 空壳）</li>
+  <li><strong>铁律</strong>：必须运行、必须有工具输出、独立验证</li>
+  <li><strong>验证动作表</strong>：网页→截图+console 错误，脚本→执行+边界输入，数据→格式+行数+抽查</li>
+  <li><strong>对抗性探测</strong>：边界值(0/空/超长)、幂等性、缺失依赖、孤儿 ID</li>
+  <li><strong>输出格式</strong>：表格 <code>| # | 验证动作 | 工具 | 关键输出摘要 | PASS/FAIL |</code> + 裁定 <code>VERDICT: PASS/FAIL/PARTIAL</code></li>
+  <li><strong>自检清单</strong>：BEFORE PASS / BEFORE FAIL 各有两个检查项</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>"识别你的合理化借口"</strong>— 列出 LLM 最常见的逃避理由，提前打预防针</li>
+  <li><strong>产物类型→验证动作映射</strong>— 不用每次都推理"怎么验证"，直接查表</li>
+  <li><strong>对抗性探测必做</strong>— "至少运行一个，否则你只确认了 happy path"</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>同样不是代码问题，而是一个<strong>验证规则引擎的提示词</strong>。重点是验证动作表和自检清单的设计。代码层面，可以写一个 <code>verify_runner.py</code> 自动读取产物类型，匹配验证动作并执行。</p>
+</div>
+
+<!-- 1.6 Code Review -->
+<h3 id="sec1.6">1.6 Code Review 模式 (review_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>对话内对抗性 Code Review。用户输入 <code>/review</code> 触发，主 Agent 在当前对话拉起评审，直接 echo 报告，不开 subagent、不落盘。</p>
+
+<p><span class="why">为什么：</span>写完代码需要快速 Review，但不想切出当前上下文。review_sop 让 Agent 在当前对话内完成完整评审。</p>
+
+<p><span class="how">实现：</span></p>
+<ul>
+  <li>入口：<code>frontends/review_cmd.py:install()</code> — monkey-patch <code>GenericAgent._handle_slash_cmd</code></li>
+  <li>底层：<code>review_inline_prompt.txt</code> + <code>code_review_principles.md</code>（15 条好代码原则）</li>
+  <li>5 步工作流：读底料 → 锁定范围 → 逐文件读 → 回答 Q1-Q4 → 列 P0~P3 findings</li>
+  <li><strong>15 条代码原则</strong>：模块边界清晰、局部可推理、可组合、变化半径小、复杂度线性增长…</li>
+  <li><strong>8 条防误报规则</strong>：每条 finding 必须通过 Discrete & actionable / Introduced by this change / Not intentional… 等检查</li>
+  <li><strong>输出协议</strong>：Scope → Verdict → Summary → Design Challenge → Findings(P0→P3) → Cross-file notes → Regression tests</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>对抗性 framing</strong>— Q1-Q4 迫使 Reviewer 先质疑方案本身，再找 bug</li>
+  <li><strong>防误报八规则</strong>— 解决了 LLM Review 最头疼的"过度报告"问题</li>
+  <li><strong>15 条好代码原则</strong>— 不是最佳实践清单，而是<strong>评估维度</strong>，每条 finding 必须映射到其中一条</li>
+  <li><strong>"Why-first" 措辞规范</strong>— 第一句给原因，不写"Great work, but..."</li>
+</ul>
+</div>
+
+<!-- 1.7 记忆治理 -->
+<h3 id="sec1.7">1.7 四层记忆治理 (memory_management_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>GA 最底层的<strong>记忆架构宪法</strong>。定义了 L1(极简索引) → L2(事实库) → L3(SOP/脚本) → L4(历史会话) 的四层记忆体系。</p>
+
+<p><span class="why">为什么：</span>LLM 的上下文窗口有限，记忆如果膨胀就会挤占推理空间。需要一套<strong>信息分层+压缩+淘汰</strong>机制。</p>
+
+<p><span class="how">核心机制：</span></p>
+<ul>
+  <li><strong>4 条核心公理</strong>：
+    <ol>
+      <li><strong>行动验证原则</strong>（No Execution, No Memory）— 只能存工具调用验证过的信息</li>
+      <li><strong>神圣不可删改性</strong>— 验证过的有效配置/避坑指南在重构时严禁丢弃</li>
+      <li><strong>禁止存储易变状态</strong>— 不存时间戳/PID/临时路径</li>
+      <li><strong>最小充分指针</strong>— 上层只留能定位下层的最短标识</li>
+    </ol>
+  </li>
+  <li><strong>决策树</strong>：环境特异性事实→L2，通用操作规律→L1 RULES，特定任务技术→L3，通用常识→丢弃</li>
+  <li><strong>L1 同步规则</strong>：新增场景→低频→L3 列表加文件名；删除场景→删对应行；不搬细节</li>
+</ul>
+
+<pre>
+# 四层记忆示意
+L1: global_mem_insight.txt (≤30行, &lt;1k tokens)
+    ↓ 导航指针
+L2: global_mem.txt (环境事实, 分段组织)
+    ↓ 详细引用
+L3: memory/*.md, *.py (SOP/工具脚本)
+    ↓ 定位过往
+L4: L4_raw_sessions/ (历史会话, scheduler自动收集)
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>"No Execution, No Memory"</strong>— 这个原则是防止 LLM 幻觉写入记忆的关键</li>
+  <li><strong>L1 必须是存在性指针</strong>— "用什么 SOP 能做到什么"，而不是 How-to 细节</li>
+  <li><strong>命名自解释优先</strong>— SOP 名能说清楚的，L1 不加注释；改名的 ROI 高于改 L1</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>重点在记忆的<strong>分层架构</strong>和<strong>同步规则</strong>。L1 用 <code>patch</code> 级别修改（不能 overwrite），L2/L3 可以增删。核心是写好"什么放哪层"的决策树。</p>
+</div>
+
+<!-- 1.8 进程记忆扫描 -->
+<h3 id="sec1.8">1.8 进程记忆扫描 (procmem_scanner)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>一个<strong>Windows 进程内存扫描器</strong>，支持 Hex 特征码搜索和字符串匹配，可选 LLM 增强模式输出上下文。</p>
+
+<p><span class="why">为什么：</span>有时需要读取其他进程的内存数据（如微信自绘 UI 中的文本），用 Win32 API 直接 ReadProcessMemory。</p>
+
+<p><span class="how">代码实现（120 行 Python + ctypes）：</span></p>
+<ul>
+  <li>定义 <code>MEMORY_BASIC_INFORMATION</code> 结构体 + OpenProcess/VirtualQueryEx/ReadProcessMemory 签名</li>
+  <li><code>scan_memory(pid, pattern, mode, llm_mode)</code> 主函数：
+    <ol>
+      <li>OpenProcess 获取句柄</li>
+      <li>VirtualQueryEx 遍历内存页，跳过 <code>State != MEM_COMMIT</code> 或 <code>Protect</code> 不可读的页</li>
+      <li>ReadProcessMemory 读取页数据</li>
+      <li>用 <strong>YARA</strong>（vs 2022 的 yara-python）做模式匹配（Hex 或字符串）</li>
+      <li>LLM 模式：返回 base64+context，方便模型分析</li>
+    </ol>
+  </li>
+  <li><strong>CE 式差集扫描</strong>：一次全量 scan + 多次 ReadProcessMemory 筛选变化区域</li>
+</ul>
+
+<pre>
+# 核心扫描代码（简化）
+def scan_memory(pid, pattern, mode='auto', llm_mode=False):
+    h_proc = k32.OpenProcess(PROCESS_ALL_ACCESS, False, pid)
+    curr_addr = 0
+    while True:
+        mbi = MEMORY_BASIC_INFORMATION()
+        k32.VirtualQueryEx(h_proc, curr_addr, byref(mbi), sizeof(mbi))
+        if mbi.State != MEM_COMMIT or ...: continue
+        data = ctypes.create_string_buffer(mbi.RegionSize)
+        k32.ReadProcessMemory(h_proc, mbi.BaseAddress, data, mbi.RegionSize, byref(read))
+        # YARA 规则匹配
+        if matches: 记录结果
+        curr_addr = mbi.BaseAddress + mbi.RegionSize
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>YARA 做模式匹配</strong>— 比暴力搜索快一个数量级，支持通配符 <code>??</code></li>
+  <li><strong>LLM 模式</strong>— 返回带上下文的 base64 而非原始字节，让模型能直接理解</li>
+  <li><strong>差集扫描</strong>— 一次全量扫描 + 多次差分，定位动态变化的内存</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>我会用同样的 ctypes + YARA 方案。关键优化点是<strong>跳过不可读页</strong>（节省大量时间）和<strong>模式长度检测</strong>（Hex 模式需要偶数字节长度）。</p>
+</div>
+
+<!-- 1.9 执行反思 -->
+<h3 id="sec1.9">1.9 执行反思 (reflection_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>阻断"连续失败不断重试"恶性循环的<strong>自纠偏机制</strong>。3 次失败或 15 轮后触发，5 个问题自问。</p>
+
+<p><span class="why">为什么：</span>Agent 会陷入失败循环——同一个操作反复试。需要一个机制在问题恶化前喊停，换方案或求助。</p>
+
+<p><span class="how">协议：</span></p>
+<ul>
+  <li>触发条件：连续 3 次无实质进展 OR 已执行 ≥ 15 轮</li>
+  <li>5 个问题：原始目标还记得吗？最近 3 步有实质进展吗？在重复失败操作吗？换方案是什么？需要请求用户吗？</li>
+  <li>3 种结论：继续 / 微调(换工具/参数/顺序) / 暂停请求干预</li>
+  <li>输出格式：<code>📌 反思 @第N轮</code> + 状态 + 原因</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>前置 Constitution</strong>— 先自纠偏，再走 Rule 3 请求干预</li>
+  <li><strong>15 秒自问</strong>— 不耗时，但能有效阻断 Agent 的"僵尸执行"</li>
+  <li><strong>输出格式极简</strong>— 一行结论，不写长篇</li>
+</ul>
+</div>
+
+<!-- 1.10 定时任务 -->
+<h3 id="sec1.10">1.10 定时任务 (scheduled_task_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>定时执行任务的系统。JSON 定义任务 → scheduler 60s 轮询 → 条件满足时触发。</p>
+
+<p><span class="why">为什么：</span>有些任务需要定时执行（日报、巡检、监控），不能依赖用户手动触发。</p>
+
+<p><span class="how">实现：</span></p>
+<ul>
+  <li><code>sche_tasks/*.json</code> 定义任务：<code>{schedule, repeat, enabled, prompt}</code></li>
+  <li><code>repeat</code> 支持：daily/weekday/weekly/monthly/once/every_Nh/every_Nd</li>
+  <li>scheduler.py 每 60s 轮询，条件：enabled=true + 时间≥schedule + 冷却已过</li>
+  <li><code>scheduler.health_check()</code> 返回所有任务状态：HEALTHY/OVERDUE/DISABLED/NEVER_RUN/ERROR</li>
+  <li><code>once</code> 类型执行一次后冷却 100 年（永不过期）</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>JSON 任务定义</strong>— 比 crontab 更直观，可动态增删</li>
+  <li><strong>健康检查</strong>— 一目了然知道所有任务状态</li>
+  <li><strong>冷却时间防重复</strong>— 基于 done/ 目录的最新报告时间戳</li>
+</ul>
+</div>
+
+<!-- 1.11 Subagent -->
+<h3 id="sec1.11">1.11 Subagent 调用 (subagent.md)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>GA 的<strong>子进程调用协议</strong>— 主 Agent 可以拉起一个独立的子 Agent 进程，通过文件系统通信。</p>
+
+<p><span class="why">为什么：</span>主 Agent 的上下文是最稀缺资源。复杂探测、批量任务、独立验证应该交给子进程，主 Agent 只做决策和汇总。</p>
+
+<p><span class="how">实现：</span></p>
+<ul>
+  <li>目录：<code>temp/{task_name}/</code>，包含 output.txt / reply.txt / _stop / _keyinfo / _intervene 等通信文件</li>
+  <li>启动：<code>python agentmain.py --task {name} [--input "txt"] [--llm_no N]</code></li>
+  <li>通信协议：output.txt(append) → reply.txt(写回复) → output1/2/3.txt 循环</li>
+  <li>两种模式：测试模式（行为验证）+ Map 模式（并行分发）</li>
+  <li>子 Agent 内部可自行使用 plan_mode</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>文件系统通信</strong>— 简单可靠，比 RPC/消息队列轻量</li>
+  <li><strong>Map 模式</strong>— 同构任务并行分发，独立上下文不污染</li>
+  <li><strong>监察模式</strong>— <code>--verbose</code> 输出原始工具结果，主 Agent 即使审查</li>
+</ul>
+</div>
+
+<!-- ===================== 第二章 ===================== -->
+<h2 id="sec2">二、🌐 浏览器/自动化系列（约 10 个 SOP）</h2>
+
+<div class="summary-box">
+<strong>总体画像：</strong>GA 的浏览器自动化不是 Selenium/Playwright。它通过 <strong>Chrome 扩展桥 (tmwd_cdp_bridge)</strong> + <strong>物理键鼠 (ljqCtrl)</strong> + <strong>视觉理解 (Vision API)</strong> 三层，覆盖了普通 Web 操作、硬编码触发的、验证码等所有场景。
+</div>
+
+<!-- 2.1 TMWebDriver -->
+<h3 id="sec2.1">2.1 TMWebDriver — 浏览器接管引擎</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>一个通过 Chrome 扩展接管<strong>用户真实浏览器</strong>（保留登录态/Cookie）的底层驱动。不是 Selenium/Playwright 的替代品，而是<strong>用户浏览器操作层</strong>。</p>
+
+<p><span class="why">为什么：</span>很多操作需要用户的登录态（微信、淘宝、企业系统），用 Selenium 重登不现实。TMWebDriver 直接操作已登录的浏览器。</p>
+
+<p><span class="how">核心技术栈（137 行 SOP 记录了全部坑）：</span></p>
+
+<h4>核心能力矩阵</h4>
+<table>
+  <tr><th>能力</th><th>方案</th><th>说明</th></tr>
+  <tr><td>页面操作</td><td><code>web_scan / web_execute_js</code></td><td>直接对真实浏览器操作</td></tr>
+  <tr><td>JS 事件</td><td><code>isTrusted=false</code> 限制</td><td>敏感操作需 CDP 桥或 ljqCtrl</td></tr>
+  <tr><td>文件上传</td><td>DataTransfer API 纯 JS</td><td><code>new File() → DataTransfer → input.files</code></td></tr>
+  <tr><td>物理坐标</td><td><code>physX = (screenX + rect中心x) * dpr</code></td><td>结合 ljqCtrl 做物理点击</td></tr>
+  <tr><td>iframe 穿透</td><td>CDP <code>Page.navigate</code> 到 iframe src</td><td>或 <code>Page.frameTree</code> 找 frame</td></tr>
+  <tr><td>PDF 下载</td><td><code>fetch(URL) → blob → a.click()</code></td><td>绕过 Chrome 预览</td></tr>
+  <tr><td>autofill 释放</td><td><code>bringToFront → mousePressed 点任一字段</code></td><td>Chrome 仅在前台释放 autofill</td></tr>
+  <tr><td>验证码截图</td><td>CDP <code>Page.captureScreenshot</code></td><td>前后台都行，全页高清</td></tr>
+  <tr><td>Shadow DOM</td><td><code>DOM.getDocument({pierce:true})</code></td><td>穿透所有 Shadow 边界(含 closed)</td></tr>
+  <tr><td>后台标签节流</td><td>CDP <code>Page.bringToFront</code></td><td>Chrome 后台 setTimeout 延迟到 ≥1min</td></tr>
+</table>
+
+<pre>
+# CDP Text Input — 绕过 isTrusted 检查
+# 快但无 key 事件（受控组件需补 input 事件）
+ws.send(JSON.stringify({
+  id: 1, method: 'Input.insertText',
+  params: {text: '要输入的内容'}
+}));
+
+# 完整键盘模拟
+ws.send(JSON.stringify({
+  id: 2, method: 'Input.dispatchKeyEvent',
+  params: {type: 'keyDown', key: 'a', windowsVirtualKeyCode: 65}
+}));
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>逐场景记录方案，而非通用抽象</strong>— 每个难题（autofill/Shadow DOM/iframe/文件上传）单独记录最佳方案</li>
+  <li><strong>CDP 桥是首选</strong>— 绕过 isTrusted 检查，能同时实现 JS 灵活性和物理可靠性</li>
+  <li><strong>排查流程明确</strong>— 连不上时分 4 步排查：浏览器→WS后台→扩展→请求协助</li>
+</ul>
+</div>
+
+<!-- 2.2 ljqCtrl -->
+<h3 id="sec2.2">2.2 ljqCtrl — 物理键鼠工具</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>基于 win32 API 的<strong>物理键鼠模拟工具</strong>。纯粹的底层操作——移动鼠标、点击、按键。</p>
+
+<p><span class="why">为什么：</span>有些操作 JS 做不了（isTrusted=false），需要真实的人类操作。ljqCtrl 就是在操作系统层面模拟鼠标键盘。</p>
+
+<p><span class="how">代码实现（115 行 Python + win32api）：</span></p>
+<ul>
+  <li><strong>DPI 感知</strong>：<code>GetDeviceCaps(DESKTOPHORZRES)</code> 拿物理分辨率，<code>GetSystemMetrics(SM_CXSCREEN)</code> 拿逻辑分辨率，算 <code>dpi_scale</code></li>
+  <li><strong>SetCursorPos(z)</strong>：输入逻辑坐标，内部乘以 dpi_scale 转物理</li>
+  <li><strong>Click(x, y)</strong>：支持 tuple/双参数，内部转物理坐标后调用 <code>mouse_event</code></li>
+  <li><strong>Press(cmd, staytime)</strong>：解析 <code>ctrl+v</code> 为 <code>VK_CONTROL + VK_V</code> 组合键，查 VK_CODE 字典</li>
+  <li><strong>FindBlock(fn, wrect, threshold)</strong>：OpenCV <code>matchTemplate</code> 匹配截图，返回物理坐标</li>
+  <li><strong>GrabWindow(hwnd)</strong>：获取窗口截图（DPI 安全的坐标转换）</li>
+</ul>
+
+<pre>
+# ljqCtrl 核心 — DPI 感知 + 物理坐标
+dpi_scale = cwidth / swidth  # 逻辑/物理 比值
+
+def Click(x, y=None):
+    if type(x) is tuple: x, y = x
+    # 物理坐标 = 逻辑坐标 * dpi_scale
+    SetCursorPos((int(x*dpi_scale), int(y*dpi_scale)))
+    MouseDown(); time.sleep(0.05); MouseUp()
+
+def Press(cmd, staytime=0):
+    keys = cmd.lower().split('+')
+    mods = [VK_CODE[k] for k in keys[:-1] if k in VK_CODE]
+    main = VK_CODE[keys[-1]]
+    for m in mods: win32api.keybd_event(m, 0, 0, 0)
+    win32api.keybd_event(main, 0, 0, 0)
+    time.sleep(staytime)
+    win32api.keybd_event(main, 0, win32con.KEYEVENTF_KEYUP, 0)
+    for m in reversed(mods): win32api.keybd_event(m, 0, win32con.KEYEVENTF_KEYUP, 0)
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>DPI 感知是灵魂</strong>— 高 DPI 屏幕（4K/Retina）下逻辑/物理坐标换算不对，一切操作都偏移</li>
+  <li><strong>禁 pyautogui</strong>— 硬性约束（会污染 win32api）</li>
+  <li><strong>FindBlock 截图匹配</strong>— OpenCV matchTemplate 做图色识别，给无 class/id 的按钮提供了点击方案</li>
+  <li><strong>窗口坐标转换陷阱记录</strong>— GetWindowRect vs ClientToScreen 的区别、DPI 是否 set aware 的区别，都写在 SOP 里</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>核心是 <code>win32api</code> + <code>ctypes</code>（GetDeviceCaps 拿物理分辨率）。难点在<strong>坐标系统一</strong>——全程物理坐标，只在接口处做一次转换。VK_CODE 字典（映射 <code>ctrl+v</code> → 虚拟键码）是体力活。</p>
+</div>
+
+<!-- 2.3 Vision API -->
+<h3 id="sec2.3">2.3 Vision API — 视觉理解</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>多后端视觉理解 API，支持 Claude/OpenAI/ModelScope 三后端，截图后让大模型"看"。</p>
+
+<p><span class="why">为什么：</span>有的页面状态用 DOM 读不到（canvas 渲染、自绘 UI、复杂图表），需要模型"看截图"来理解。</p>
+
+<p><span class="how">代码实现（114 行 Python）：</span></p>
+<ul>
+  <li><code>ask_vision(image, prompt, backend, timeout, max_pixels)</code> 主入口</li>
+  <li><code>_prepare_image()</code>：路径/PIL → JPEG base64，限制 max_pixels（默认 1440000）</li>
+  <li>三后端走通：Claude（<code>/v1/messages</code> 含 image 块）、OpenAI 兼容（<code>data:image/jpeg;base64</code>）、ModelScope（同 OpenAI 兼容）</li>
+  <li>配置从 <code>mykey.py</code> 读取（只读变量名，不读值）</li>
+</ul>
+
+<pre>
+# 三后端统一入口
+def ask_vision(image_input, prompt="详细描述", backend='modelscope'):
+    b64 = _prepare_image(image_input, max_pixels)
+    if backend == 'claude': return _call_claude(b64, prompt, timeout)
+    elif backend == 'openai': return _call_openai_compat(...)
+    elif backend == 'modelscope': return _call_openai_compat(
+        apibase='https://api-inference.modelscope.cn',
+        apikey='ms-xxx', model='Qwen/Qwen3-VL-235B-A22B-Instruct'
+    )
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>禁全屏截图</strong>— 能截窗口就不全屏，能截标题栏就不截窗口</li>
+  <li><strong>视觉 vs OCR 分工</strong>— Vision 只做"语义理解"，OCR 做"像素点击"，职责分离</li>
+  <li><strong>三后端+配置化</strong>— 不绑定单一模型，可从 mykey.py 动态读取</li>
+</ul>
+</div>
+
+<!-- 2.4 Vue3 组件操作破解 -->
+<h3 id="sec2.4">2.4 Vue3 组件破解 (vue3_component_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>绕过 Vue3 自定义组件 <code>isTrusted=false</code> 限制的<strong>终极方案</strong>——直接操作 Vue 组件实例。</p>
+
+<p><span class="why">为什么：</span>Vue3 自定义组件（如 OxdSelect）监听的是真实硬件事件，JS dispatchEvent 产生的 <code>isTrusted=false</code> 事件被组件忽略。</p>
+
+<p><span class="how">实现（200 行 SOP + JS 代码）：</span></p>
+<ul>
+  <li><strong>法一：vnode 遍历</strong> → <code>findCompByEl(rootVnode, targetEl)</code> 递归遍历虚拟 DOM 树找到组件实例，直接调 <code>comp.proxy</code> 方法</li>
+  <li><strong>法二：nativeSetter + 事件</strong> → <code>Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')</code> 拿原生 setter，然后 dispatch input/change 事件</li>
+  <li><strong>法三：具名插槽（Select 专用）</strong> → 找到 <code>el-select</code> 实例，<code>ctx.states.selectedLabel = 'xxx'; ctx.onOptionClick(optionNode)</code></li>
+  <li><strong>法四：编辑器实例 API</strong> → Quill: <code>el.__quill.setContent()</code> / Tiptap: <code>editor.commands.setContent()</code></li>
+  <li><strong>兜底：CDP Input.insertText</strong>— 绕过所有 isTrusted 检查</li>
+</ul>
+
+<pre>
+// Vue3 组件实例访问 — 终极破解
+const rootVnode = document.getElementById('app')._vnode;
+function findCompByEl(vnode, targetEl, depth = 0) {
+    if (depth > 50 || !vnode) return null;
+    const comp = vnode.component;
+    if (comp) {
+        if (comp.vnode?.el === targetEl || comp.subTree?.el === targetEl) return comp;
+        if (comp.vnode?.el?.contains?.(targetEl)) {
+            const result = findCompByEl(comp.subTree, targetEl, depth + 1);
+            if (result) return result;
+            return comp;
+        }
+    }
+    // 递归 children + dynamicChildren
+}
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>多层降级方案</strong>— 从最优(组件实例API)到次优(nativeSetter)到兜底(CDP 物理输入)</li>
+  <li><strong>编辑器识别表</strong>— class 名→编辑器类型映射，不用猜</li>
+  <li><strong>"验证标准是提交对了不是看到了"</strong>— 拦截 fetch/XHR 看 payload，而非看页面显示</li>
+</ul>
+
+<p><span class="learn">如果我们来写：</span>核心是 <code>vnode.component.proxy</code> 的递归遍历。难点在<strong>动态 children</strong> 和 <strong>Teleport</strong>（Element Plus Select 选项被 Teleport 到 body）。我会先查编辑器私有字段（el.__quill），不行再走 vnode 遍历。</p>
+</div>
+
+<!-- 2.5 CDP -->
+<h3 id="sec2.5">2.5 CDP 桥 — Chrome DevTools Protocol</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>tmwd_cdp_bridge 扩展，提供 WebSocket 直连 Chrome DevTools Protocol 的通道。</p>
+
+<p><span class="why">为什么：</span>JS 有 isTrusted 限制、DOM 操作有边界。CDP 是浏览器内部协议，没有这些限制。</p>
+
+<p><span class="how">能力：</span></p>
+<ul>
+  <li><code>Page.captureScreenshot</code> — 全页截图，前后台均可</li>
+  <li><code>Input.insertText</code> / <code>Input.dispatchKeyEvent</code> — 绕过 isTrusted</li>
+  <li><code>DOM.getDocument({depth:-1, pierce:true})</code> — 穿透 Shadow DOM（含 closed）</li>
+  <li><code>DOM.getBoxModel</code> — 获取元素坐标（四点平均，不是对角线平均——元素有 transform:rotate 时四点非矩形）</li>
+  <li><code>Page.bringToFront</code> — 激活后台标签</li>
+  <li><code>DOM.setFileInputFiles</code> — 文件上传（但 tmwd 桥中 nodeId 跨调用失效，不推荐）</li>
+</ul>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>CDP 是"万能钥匙"</strong>— JS 做不到的（截图、物理输入、文件上传），CDP 都能做到</li>
+  <li><strong>但 CDP 也有坑</strong>— nodeId 在 DOM 变更后失效、跨域 iframe 需导航到目标域、后台标签节流</li>
+  <li><strong>分步 Shadow DOM</strong>— querySelector 不能跨 Shadow 边界，需先找 host 再在其 shadow 内找子元素</li>
+</ul>
+</div>
+
+<!-- ===================== 第三章 ===================== -->
+<h2 id="sec3">三、🛒 电商/数据采集系列</h2>
+
+<!-- 3.1 CakeResume -->
+<h3 id="sec3.1">3.1 CakeResume 采集 (cakecollect_page_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>针对 <strong>CakeResume</strong> 台湾招聘网站的候选人批量采集系统。从列表页→弹窗→遍历采集→去重→chunk 保存。</p>
+
+<p><span class="why">为什么：</span>需要批量获取候选人信息（姓名/电话/Email/经验），但网站有反爬、弹窗交互复杂。</p>
+
+<p><span class="how">实现（788 行 runner.py + 369 行 cakecollector.js）：</span></p>
+<ul>
+  <li><strong>架构</strong>：runner.py(TMWebDriver驱动) → 注入 cakecollector.js(extractDetail) → 弹窗内遍历</li>
+  <li><strong>采集流程</strong>：获取候选人数量 → 点击第1人 → 弹窗循环(采集→去重→点"下一個") → 最后一人关闭</li>
+  <li><strong>17 个字段</strong>：姓名/自我介绍/期望職位/電話/Email/社媒/專業背景/工作經驗/學歷/資格認證…</li>
+  <li><strong>去重</strong>：有Email→hash(Email)，无Email→hash(姓名+页URL路径)</li>
+  <li><strong>断点续采</strong>：checkpoint.json（页码/已采数/连续失败次数），Ctrl+C 自动保存</li>
+  <li><strong>错误恢复</strong>：单候选人3次重试→5次连续失败暂停30分钟→刷新页面继续</li>
+</ul>
+
+<pre>
+# 弹窗遍历核心逻辑
+page_candidates = get_candidates_count()  # 获取列表人数
+click_candidate(0)  # 点击第一人
+wait_for_modal()    # 等待弹窗
+while True:
+    data = extract_data()  # 注入JS提取
+    if not is_duplicate(data):
+        save_to_chunk(data)
+    if not has_next_button():
+        break
+    click_next()  # 点"下一個"
+    wait_for_modal_update()
+</pre>
+
+<p><span class="learn">借鉴点：</span></p>
+<ul>
+  <li><strong>弹窗内循环</strong>— 不关闭弹窗直接点"下一個"，避免了重新打开弹窗的等待</li>
+  <li><strong>chunk 保存</strong>— 每 50 条一块，避免单文件过大</li>
+  <li><strong>checkpoint 全维度</strong>— 不仅存页码，还存连续失败次数，用于判断是暂停还是放弃</li>
+</ul>
+</div>
+
+<!-- 3.2 兴趣数据采集 -->
+<h3 id="sec3.2">3.2 兴趣数据采集 (interest_data_collection_sop)</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>用户兴趣领域（股票/彩票/体育预测）的数据采集方案索引。</p>
+
+<p><span class="why">为什么：</span>用户有股票/彩票/体育等订阅需求，需要采集数据。</p>
+
+<p><span class="how">方案：</span>先查 skill_search 有无现成 skill（如 stock-prices, yfinance-python），无则用 generic_scraper（Chrome 扩展支持动态页面）。</p>
+</div>
+
+<!-- 3.3 投稿评审 -->
+<h3 id="sec3.3">3.3 投稿/评审体系</h3>
+
+<div class="card">
+<p><span class="what">是什么：</span>sophub 上的<strong>用户投稿评审系统</strong>。136 条 SOP 分 6 页，每条有代码+README，支持评分/评价。</p>
+
+<p><span class="why">为什么：</strong>社区共建 SOP 市场，用户投稿→评审→上架，形成"写 SOP → 用 SOP → 评 SOP → 改进 SOP"的飞轮。</p>
+
+<p><span class="how">流程：</p>
+<ul>
+  <li>task_mgmt_sop 定义新任务启动流程：自查 memory → 搜 sophub → 下载参考 → 改编或重写</li>
+  <li>review_sop/review_inline_prompt.txt 提供评审的对抗性框架</li>
+  <li>投稿亮点分类：🔥 用户投稿区按领域分类（电商/GA核心/浏览器自动化等）</li>
+</ul>
+</div>
+
+<!-- ===================== 第四章 ===================== -->
+<h2 id="sec4">四、🔮 认知设计理念总结</h2>
+
+<div class="card">
+<p>读完全部 SOP 源码，最震撼的不是某个具体技术，而是背后的<strong>认知设计哲学</strong>：</p>
+
+<h3>1. 强制结构化推理</h3>
+<p>GA 不相信 LLM 的"自由推理"。每个 SOP 都把思考过程拆成<strong>固定步骤</strong>：</p>
+<ul>
+  <li>plan_sop 拆成 探索→计划→执行→验证 四步</li>
+  <li>autonomous_operation 拆成 读TODO→执行→写报告→记历史→结束</li>
+  <li>review_sop 拆成 读底料→锁定范围→读文件→Q1-Q4→列Findings</li>
+</ul>
+
+<h3>2. 上下文保护是第一优先级</h3>
+<p>主 Agent 的上下文是最稀缺资源：</p>
+<ul>
+  <li>探索/验证必须用 subagent，主 Agent 不直接参与</li>
+  <li>plan_sop 中探索态强约束"禁止主 Agent 直接探测"</li>
+  <li>信息分层 L1-L4，上层只存指针不存细节</li>
+  <li>L1 硬约束 ≤30 行</li>
+</ul>
+
+<h3>3. 对抗性思考嵌入</h3>
+<p>每个关键环节都嵌入"挑刺"视角：</p>
+<ul>
+  <li>verify_sop：你的两个失败模式 — "验证回避"和"被前80%迷惑"</li>
+  <li>review_sop：Q1-Q4 对抗性 framing，8 条防误报规则</li>
+  <li>supervisor_sop：干预条件表（跳步/遗漏/光说不做/断言无据）</li>
+  <li>memory_management：No Execution, No Memory — 防止幻觉写入</li>
+</ul>
+
+<h3>4. 可操作性 > 完备性</h3>
+<ul>
+  <li>SOP 不追求覆盖所有场景，而是对高频场景给出<strong>精确的可操作指令</strong></li>
+  <li>"验证标准是提交对了不是看到了" — 一句话比十页文档有用</li>
+  <li>"识别你的合理化借口" — 提前打预防针比事后纠偏有效</li>
+</ul>
+
+<h3>5. 犯错边界管理</h3>
+<ul>
+  <li>reflection_sop：3 次失败或 15 轮后自纠偏</li>
+  <li>Constitution Rule 3：3 次失败请求干预</li>
+  <li>checkpoint 保存所有维度（页码/已采数/连续失败次数），支持精确恢复</li>
+  <li>"失败报告同样有价值" — 不要求每次都成功</li>
+</ul>
+</div>
+
+<!-- ===================== 第五章 ===================== -->
+<h2 id="sec5">五、📝 总纲：如果要写，怎么写？</h2>
+
+<div class="card">
+<p>基于对全部 SOP 源码的分析，总结我们写类似系统的<strong>方法论</strong>：</p>
+
+<h3>1. SOP 的写作范式</h3>
+<pre># 标题 — 一句话说清干什么用
+
+> 一行的核心原则 / 警示
+
+## 是什么（场景 + 价值）
+
+## 为什么（不这么做的后果）
+
+## 怎么做（编号步骤，每个步骤一个明确动作）
+
+## 代码实现（关键代码片段，不需要完整文件）
+
+## 铁律 / 红线（⚠️ 禁止 / 必须 / 格式要求）
+
+## 避坑记录（具体环境下的失败模式）
+
+## 验证标准（怎么确认做对了）</pre>
+
+<h3>2. 代码工具的开发模式</h3>
+<pre>1. **识别高频痛点** — 什么操作每次都要重写？→ 封装成工具函数
+2. **纯函数优先** — 输入明确，输出明确，无副作用
+3. **路径动态计算** — 基于 __file__.resolve().parent，不硬编码
+4. **回滚/幂等** — 失败能回滚，重复调用不炸
+5. **三后端/多配置** — 不绑定单一服务（Vision API 三后端）
+6. **SOP + 代码分离** — SOP 写"怎么用"，代码写"怎么实现"</pre>
+
+<h3>3. 如果让我们从头写一套类似系统</h3>
+
+<div class="summary-box">
+<strong>第一步：写 Constitution（宪法）</strong> — 定义 Agent 的行为边界（禁止什么、必须什么、失败怎么办）<br>
+<strong>第二步：写 Memory Management（记忆治理）</strong> — 定义信息分层 L1-L4 和存储规则<br>
+<strong>第三步：写 Plan SOP（规划模式）</strong> — 复杂任务的结构化执行框架<br>
+<strong>第四步：写核心工具</strong> — Subagent（进程管理）、Verify（验证协议）、Reflection（反思纠偏）<br>
+<strong>第五步：写领域 SOP</strong> — 浏览器自动化、数据采集、电商等业务 SOP<br>
+<strong>第六步：建 SOP 市场</strong> — sophub 式的社区生态
+</div>
+
+<h3>4. 最重要的几个设计决策</h3>
+<table>
+  <tr><th>决策</th><th>GA 的选择</th><th>为什么</th></tr>
+  <tr><td>通信方式</td><td>文件系统（非 RPC）</td><td>简单可靠，可审计，不依赖网络</td></tr>
+  <tr><td>状态存储</td><td>JSON 文件（非数据库）</td><td>人类可读，工具无关，git 可追踪</td></tr>
+  <tr><td>记忆格式</td><td>Markdown（非结构化数据）</td><td>LLM 原生理解，人类也能读能改</td></tr>
+  <tr><td>浏览器接管</td><td>Chrome 扩展桥（非 Selenium）</td><td>保留登录态，绕过反爬</td></tr>
+  <tr><td>验证模式</td><td>独立 subagent（非自验证）</td><td>避免主 Agent 的确认偏误</td></tr>
+  <tr><td>任务规划</td><td>plan.md checklist（非图形化）</td><td>人和机器都能读，git 可 diff</td></tr>
+</table>
+
+<h3>5. 可以复用的套路</h3>
+<ul>
+  <li><strong>"先读再动"</strong> — 任何操作前先 <code>file_read</code> 了解现状</li>
+  <li><strong>"小步快跑"</strong> — 每次只做一个子任务，做完就 checkpoint</li>
+  <li><strong>"三层兜底"</strong> — 最优方案→次优方案→兜底方案（Vue3 操作的四层降级）</li>
+  <li><strong>"纯文本协议"</strong> — Agent 之间通过 Markdown/JSON 文件通信，不发明新协议</li>
+  <li><strong>"价值公式"</strong> — 用公式而不是感觉做决策：<code>「AI训练数据无法覆盖」×「对未来协作有持久收益」</code></li>
+  <li><strong>"对抗性思维"</strong> — 每个环节都假设自己会犯错，嵌入自检机制</li>
+</ul>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: .85em; text-align: center;">
+  <p>GA-SOP 深度解码 · 基于 memory/ 目录 20+ 核心 SOP 源码分析</p>
+  <p>涵盖 ~35 个 SOP + Python 工具脚本 · 2026-05-27</p>
+  <p style="margin-top: 8px;">💡 每条分析来自实际 <code>file_read()</code> 确认的源码，非 LLM 记忆猜测</p>
+</div>
+  </div>
+  <div class="footer">
+    <p>Posted on <a href="https://zhangpinkdolphin.github.io">zhangPinkdolphin.github.io</a></p>
+    <p style="margin-top:8px;">Powered by <a href="https://github.com/zhangPinkdolphin/GenericAgent">GenericAgent</a></p>
+  </div>
+</div>
+</body>
+</html>
