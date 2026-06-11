@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从零看懂 GenericAgent 编码 — zhangPinkdolphin</title>
+<style>
+  :root {
+    --bg: #0a0a14; --card: #12121f; --surface: #1a1a2e;
+    --border: #1e1e32; --text: #d0d0e0; --muted: #6b6b8a;
+    --accent: #667eea; --accent2: #764ba2; --green: #4ade80;
+    --amber: #fbbf24; --red: #f87171; --blue: #60a5fa;
+    --purple: #bc8cff; --orange: #fb923c;
+    --code-bg: #060610;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.8; }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+         background: rgba(10,10,20,0.85); backdrop-filter: blur(12px);
+         border-bottom: 1px solid var(--border); padding: 14px 40px;
+         display: flex; align-items: center; gap: 12px; }
+  .nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .nav a:hover { color: var(--accent); }
+  .nav .sep { color: var(--border); }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  .article-body { padding: 100px 0 40px; }
+  h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2));
+       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+       margin-bottom: 0.3em; line-height: 1.3; }
+  h2 { font-size: 1.5rem; color: var(--accent); margin: 1.8em 0 0.6em;
+       border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+  h3 { font-size: 1.15rem; color: var(--green); margin: 1.2em 0 0.4em; }
+  h4 { font-size: 1rem; color: var(--amber); margin: 0.8em 0 0.3em; }
+  p { margin: 0.6em 0; color: var(--text); }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 2em; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+        padding: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 1em 0; }
+  code { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; }
+  p > code, li > code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  .card, .section-card { background: var(--card); border: 1px solid var(--border);
+                         border-radius: 12px; padding: 20px; margin: 1em 0; }
+  .tag, .badge { display: inline-block; background: rgba(102,126,234,0.12); color: var(--accent);
+                 padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; margin: 2px 4px 2px 0; }
+  ul, ol { padding-left: 1.5em; margin: 0.5em 0; }
+  li { margin: 0.3em 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9rem; }
+  th { text-align: left; padding: 10px 12px; background: rgba(102,126,234,0.08);
+       border-bottom: 1px solid var(--border); color: var(--accent); font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  blockquote { border-left: 3px solid var(--accent); background: rgba(102,126,234,0.06);
+               padding: 12px 16px; margin: 1em 0; border-radius: 0 8px 8px 0; }
+  blockquote p { color: #b0b0c8; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+         padding: 20px 24px; margin-bottom: 32px; }
+  .toc a { display: block; padding: 3px 0; font-size: 0.9rem; }
+  .footer { text-align: center; padding: 60px 0 40px; color: var(--muted); font-size: 0.85rem; }
+  img { max-width: 100%; border-radius: 8px; }
+  @media (max-width: 640px) { .nav { padding: 12px 16px; } h1 { font-size: 1.5rem; } .container { padding: 0 16px; } }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="/">← 首页</a>
+  <span class="sep">/</span>
+  <span style="color:var(--muted);font-size:0.9rem;">从零看懂 GenericAgent 编码</span>
+</div>
+<div class="container">
+  <div class="article-body">
+<div class="container">
+  <h1>从零看懂 GenericAgent 编码</h1>
+  <div class="subtitle">以 generic_scraper 项目为例</div>
+  
+  <h1>从零看懂 GenericAgent 编码</h1><h2>以 generic_scraper（通用爬虫）项目为例</h2><br><blockquote>**目标读者**：没写过代码，但想理解"一个软件是怎么做出来的"</blockquote><blockquote>**你不需要**：会 Python、会写代码、懂任何技术术语</blockquote><blockquote>**你需要**：一台电脑、好奇心、约30分钟</blockquote><br><p>---</p><br><h2>📌 第一章：先看看它长什么样</h2><br><h3>1.1 打开界面</h3><br><p>打开浏览器，访问 <code>http://127.0.0.1:8000</code>，你会看到这个页面：</p><br><pre><code>┌─────────────────────────────────────────────────┐
+│  MVP 通用爬虫                                    │
+│  通用爬虫工具，支持CSS/xpath选择器、多页翻取        │
+├─────────────────────────────────────────────────┤
+│  目标URL: [________________________________]    │
+│                                                 │
+│  字段定义:                                       │
+│  ┌──────────┬────────────┬──────────┬─────────┐│
+│  │ 字段名    │ CSS选择器   │ 属性     │ 容器    ││
+│  ├──────────┼────────────┼──────────┼─────────┤│
+│  │ title    │ h1         │ text     │         ││
+│  │ link     │ a          │ href     │         ││
+│  └──────────┴────────────┴──────────┴─────────┘│
+│                                                 │
+│  [开始爬取]                                      │
+└─────────────────────────────────────────────────┘
+</code></pre><br><blockquote>**💡 这是哪来的？**</blockquote><blockquote>这是一段 HTML 代码（`frontend.html`），浏览器把它渲染成了上面的样子。</blockquote><blockquote>HTML 就像**搭积木的图纸**，告诉浏览器"标题放这、按钮放那"。</blockquote><br><h3>1.2 试一次</h3><br><p>1. 在"目标URL"填入：<code>https://httpbin.org/html</code></p><p>2. 在字段里填：</p><p>   - 字段名：<code>title</code>，选择器：<code>h1</code>，属性：<code>text</code></p><p>3. 点"开始爬取"</p><p>4. 等几秒，你会看到结果：</p><br><pre><code>✅ 完成！共 1 条数据
+┌──────────────────────────────────────┐
+│ title                                │
+├──────────────────────────────────────┤
+│ Herman Melville - Moby-Dick          │
+└──────────────────────────────────────┘
+</code></pre><br><blockquote>**🎉 恭喜！你刚刚完成了一次"网页爬取"。**</blockquote><blockquote>程序做了三件事：</blockquote><blockquote>1. 打开 httpbin.org 这个网页</blockquote><blockquote>2. 找到标签 `<h1>`（也就是"h1"选择器指向的位置）</blockquote><blockquote>3. 把里面的文字提取出来</blockquote><br><p>---</p><br><h2>📌 第二章：软件的"骨架"——一个项目有哪些文件</h2><br><p>打开文件夹 <code>generic_scraper/</code>，你会看到这些文件：</p><br><pre><code>generic_scraper/
+├── main.py           ← 核心代码 (大脑，负责调度)
+├── frontend.html     ← 界面 (脸，给用户看)
+├── models.py         ← 数据库模型 (笔记本，存数据)
+├── spider.py         ← 旧版本 (废弃，不用管)
+├── pipelines.py      ← 旧版本 (废弃，不用管)
+├── data.db           ← 数据库文件 (存下来的数据)
+└── SNAPSHOT_*.md     ← 项目总结 (给开发者看)
+</code></pre><br><blockquote>**💡 类比：一家餐厅**</blockquote><blockquote>- `main.py` = 厨房里的**主厨**，决定做什么菜、什么顺序</blockquote><blockquote>- `frontend.html` = **菜单**，让客人知道能点什么</blockquote><blockquote>- `models.py` = **账本**，记录今天的订单</blockquote><blockquote>- `data.db` = **冰箱**，存食材（数据）</blockquote><br><p>---</p><br><h2>📌 第三章：从零到有的创作过程</h2><br><p>这一章是核心。我带你看 generic_scraper <strong>是怎么一步步被写出来的</strong>。</p><br><h3>3.1 第0步：发现问题</h3><br><pre><code>🤔 "我需要一个工具，能自动从网页上提取信息。
+   比如每天自动看某网站有没有上新商品。
+   但那些网站需要登录，普通爬虫做不到。"
+</code></pre><br><p>这就是<strong>需求</strong>——任何软件的起点。</p><br><h3>3.2 第1步：设计方案（想清楚了再动手）</h3><br><p>设计画在脑子里大概是这样的：</p><br><pre><code>用户点击"开始爬取"
+    ↓
+程序收到指令，知道要去哪个网址、提取什么
+    ↓
+程序打开Chrome浏览器（借用户已经登录好的那个）
+    ↓
+在浏览器里执行一段"找东西"的指令（JS代码）
+    ↓
+把找到的结果返回给用户
+</code></pre><br><blockquote>**💡 关键决策"为什么不用Scrapy？"**</blockquote><blockquote>Scrapy 是 Python 最著名的爬虫框架，但它开的是**新的**浏览器——相当于你每次去一个新的超市都要重新登录会员，太麻烦。</blockquote><blockquote>而本项目的方案是：**借用你已经打开的 Chrome**，直接用你的登录态。</blockquote><blockquote>这就是"站在巨人肩膀上"。</blockquote><br><h3>3.3 第2步：搭骨架 —— 用 FastAPI 搭服务器</h3><br><p>先写一个最简单的架子（约20行）：</p><br><pre><code># main.py 第 30 行
+app = FastAPI(title="通用爬虫(TMWebDriver版)")
+# 这行定义了一个"Web应用"
+# 它是整个程序的入口，像前台接待员
+</code></pre><br><blockquote>**💡 类比**：FastAPI 就是开了一家**餐馆**（服务器），等着客人（用户浏览器）来点菜。`app = FastAPI(...)` 就是"餐馆开张"。</blockquote><br><p>接着定义"菜单"——用户能点什么菜：</p><br><pre><code># main.py 第 47-58 行
+class ScrapeField(BaseModel):
+    name: str        # 字段名，比如"title"
+    selector: str    # CSS选择器，比如"h1"（告诉程序去找哪个元素）
+    attribute: str = "text"  # 提取什么属性，默认文本
+
+class ScrapeRequest(BaseModel):
+    url: str                         # 要爬的网址
+    fields: list[ScrapeField]        # 要提取的字段列表
+    pagination_selector: str = ""    # "下一页"按钮（翻页用）
+    max_pages: int = 1               # 最多翻几页
+    wait_selector: str = ""          # 等待某个元素出现
+</code></pre><br><blockquote>**💡 类比**：这就像餐馆的**点菜单**。客人填好"URL"和"字段"，厨房才知道做什么。</blockquote><br><h3>3.4 第4步：连接浏览器 —— 借用户的Chrome</h3><br><p>爬虫的核心能力是"控制浏览器"。</p><br><pre><code># main.py 第 64-72 行
+def get_driver() -> TMWebDriver:
+    """获取TMWebDriver实例（全局单例）"""
+    global _driver
+    if _driver is None:
+        # 连接Chrome扩展（端口18765）
+        _driver = TMWebDriver(host='127.0.0.1', port=18765)
+        sessions = _driver.get_all_sessions()
+        if not sessions:
+            raise RuntimeError("浏览器无可用标签页")
+        print(f"[OK] 连接成功，可用标签页: {len(sessions)}")
+    return _driver
+</code></pre><br><blockquote>**💡 逐行解释（小白版）**：</blockquote><blockquote>- `def get_driver()` → "定义一个叫 get_driver 的功能"</blockquote><blockquote>- `global _driver` → "我要用那个全局的 _driver 变量"</blockquote><blockquote>- `if _driver is None` → "如果还没连上"（第一次调用）</blockquote><blockquote>- `TMWebDriver(host='...', port=18765)` → "连上Chrome扩展，端口18765"</blockquote><blockquote>- `get_all_sessions()` → "问问Chrome：你现在开了几个标签页？"</blockquote><blockquote>- `return _driver` → "把连好的对象返回出去，其他地方能用"</blockquote><br><h3>3.5 第5步：写核心逻辑 —— 怎么爬数据</h3><br><p>核心爬取函数 <code>_do_scrape</code>（约100行）是整个程序的灵魂。我们拆解来看：</p><br><pre><code># main.py 第 283-386 行（精简注释版）
+def _do_scrape(task_id, req):
+    """后台执行爬取"""
+    
+    # 第1步：记住当前网页（用完了要回去）
+    orig_url = driver.execute_js("return window.location.href")
+    # 比如用户在看淘宝，爬完数据后自动跳回淘宝
+    
+    # 第2步：开始翻页循环
+    for page_idx in range(req.max_pages):
+        
+        # 第2.1步：导航到目标网页
+        if page_idx == 0:  # 第一页
+            driver.execute_js("window.location.href = '目标网址'")
+        else:  # 翻页
+            # 找到"下一页"按钮并点击
+            btn = document.querySelector('下一页按钮的选择器')
+            btn.click()
+            # 相当于用户手动点了"下一页"
+        
+        # 第2.2步：等一会儿（让网页加载完）
+        time.sleep(2.5)  # 等2.5秒
+        
+        # 第2.3步：执行提取JS
+        extract_js = _build_extraction_js(req.fields)
+        result = driver.execute_js(extract_js)
+        # 这句等同于：在浏览器控制台执行一段代码
+        # 比如 document.querySelectorAll('h1')
+        
+        # 第2.4步：把结果存起来
+        all_items.extend(result.get('data', []))
+        
+        # 第2.5步：休息一下（限速，别把网站搞崩溃）
+        time.sleep(random.uniform(1.0, 5.0))
+    
+    # 第3步：恢复原始网页（用完就还）
+    if orig_url:
+        driver.execute_js(f"window.location.href = '{orig_url}'")
+    
+    # 第4步：标记任务完成
+    _tasks[task_id]["status"] = "completed"
+</code></pre><br><blockquote>**💡 这是整个程序最精妙的地方**：</blockquote><blockquote>1. **零侵入**：用完后自动跳回原网页，用户甚至不知道被"借"过</blockquote><blockquote>2. **共享登录态**：直接用的用户当前 Chrome，不需要重新登录</blockquote><blockquote>3. **异步执行**：后台线程运行，用户界面不卡</blockquote><br><h3>3.6 第6步：动态生成JS提取代码</h3><br><p>这是最"聪明"的一部分——程序自己写代码：</p><br><pre><code># main.py 第 120-248 行（核心片段）
+def _build_extraction_js(fields):
+    """
+    这个函数不提取数据，而是：
+    生成一串JavaScript代码，让浏览器去执行
+    """
+    # 比如用户想提取 h1 的文本
+    # 这个函数会生成：
+    #   document.querySelectorAll('h1')[0].textContent.trim()
+    # 
+    # 比如用户想提取 a 的链接
+    # 这个函数会生成：
+    #   document.querySelectorAll('a')[0].href
+    #
+    # 然后用 json.dumps() 把这串JS传给浏览器执行
+    
+    return js_code  # 返回生成的JS代码字符串
+</code></pre><br><blockquote>**💡 为什么这么做？**</blockquote><blockquote>因为"在浏览器里找东西"这件事，JavaScript 最擅长。Python 做不到直接操作浏览器——所以程序用 Python **生成** JavaScript 代码，再让 JavaScript 在浏览器里执行。</blockquote><p>></p><blockquote>就像：</blockquote><blockquote>- Python 是**指挥官**（制定方案）</blockquote><blockquote>- JavaScript 是**士兵**（实地执行）</blockquote><blockquote>- 指挥官不亲自上场，但士兵按指挥官的方案行动</blockquote><br><h3>3.7 第7步：API接口 —— 让前端能调用</h3><br><pre><code># main.py 第 403-429 行
+@app.post("/api/scrape")
+async def start_scrape(req: ScrapeRequest):
+    """这是前端的"开始爬取"按钮连接的后台"""
+    
+    # 1. 验证参数
+    if not req.url:
+        return {"error": "URL不能为空"}
+    
+    # 2. 创建任务
+    task_id = str(uuid.uuid4())[:8]  # 生成唯一ID
+    
+    # 3. 在后台线程中运行爬取
+    t = threading.Thread(target=_do_scrape, args=(task_id, req))
+    t.start()  # 启动线程，立即返回
+    
+    # 4. 告诉前端"任务已启动，这是你的任务ID"
+    return {"task_id": task_id}
+</code></pre><br><blockquote>**💡 为什么用"后台线程"？**</blockquote><blockquote>爬一个网页可能需要5-10秒。如果让用户一直等，体验很差。</blockquote><blockquote>所以程序说："你先去忙别的，我爬完了通知你。"</blockquote><blockquote>这就是**异步**——软件中非常重要的设计思想。</blockquote><br><h3>3.8 第8步：启动入口</h3><br><pre><code># main.py 第 468-470 行
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+</code></pre><br><blockquote>**💡 最后这两行是"开关"**：</blockquote><blockquote>- `if __name__ == "__main__"` → "如果这个文件是被直接运行的"</blockquote><blockquote>- `uvicorn.run(...)` → "启动服务器，端口8000"</blockquote><p>></p><blockquote>就像按下了电饭煲的"煮饭"按钮——之前所有的准备（洗米、加水）都已完成，现在开始执行。</blockquote><br><p>---</p><br><h2>📌 第四章：实际动手——自己改一行代码</h2><br><p>跟着做，体验"我改动了代码"的感觉。</p><br><h3>4.1 找到要改的地方</h3><br><p>打开 <code>main.py</code>，找到第 363 行：</p><br><pre><code>delay = random.uniform(1.0, 5.0)  # 翻页随机等待1-5秒
+</code></pre><br><h3>4.2 改成什么样</h3><br><p>如果你想爬得快一点（不礼貌但快），改成：</p><br><pre><code>delay = random.uniform(0.5, 1.0)  # 翻页随机等待0.5-1秒
+</code></pre><br><p>如果你想爬得慢一点（更礼貌），改成：</p><br><pre><code>delay = random.uniform(3.0, 8.0)  # 翻页随机等待3-8秒
+</code></pre><br><h3>4.3 重启看效果</h3><br><p>1. 在终端按 <code>Ctrl+C</code> 停掉正在运行的服务器</p><p>2. 重新运行：<code>python main.py</code></p><p>3. 再试一次爬取，感受速度变化</p><br><blockquote>**🎯 你做了什么？**</blockquote><blockquote>你改了一个"参数"——程序的行为随之改变。</blockquote><blockquote>这就是编程的本质：**你告诉计算机怎么做事，它就按你说的做。**</blockquote><br><p>---</p><br><h2>📌 第五章：软件工程的全景图</h2><br><h3>5.1 generic_scraper 的开发时间线</h3><br><table><thead><tr><th>步骤</th><th>做了什么</th><th>用时</th><th>关键决策</th></tr></thead><tbody><tr><td>① 需求分析</td><td>确定「要一个能爬认证站点的爬虫」</td><td>~5分钟</td><td>明确"能用已登录Chrome"是核心需求</td></tr><tr><td>② 方案调研</td><td>试了Scrapy、Playwright、CDP直连</td><td>~2小时</td><td>全部放弃，**转向TMWebDriver桥接方案**</td></tr><tr><td>③ 原型编码</td><td>写 `_build_extraction_js` + `_do_scrape`</td><td>~30分钟</td><td>核心约100行，边写边测</td></tr><tr><td>④ 前端对接</td><td>把已有的 `frontend.html` 接入新API</td><td>~10分钟</td><td>复用已有UI，只改API调用</td></tr><tr><td>⑤ 测试验证</td><td>试 httpbin.org + GitHub 搜索</td><td>~15分钟</td><td>确认提取正确、翻页正常</td></tr><tr><td>⑥ 部署上线</td><td>用 uvicorn 启动服务</td><td>~5分钟</td><td>选择"当前进程启动"而非子进程</td></tr></tbody></table><br><blockquote>**💡 真实的软件工程是这样的**：</blockquote><blockquote>- 大量时间花在**探索和试错**（步骤②花的时间最多）</blockquote><blockquote>- 真正写代码的时间只占一小部分</blockquote><blockquote>- **好的设计**（简单可靠）比**炫酷的技术**重要得多</blockquote><br><h3>5.2 为什么 GA 特别适合学编程</h3><br><pre><code>其他框架（几万行代码）
+    ↓ 小白看到就放弃了
+
+GenericAgent（~3000行核心代码）
+    ↓ 一周能读完
+
+Agent Loop（~100行核心循环）
+    ↓ 一天能理解
+
+一个具体的子项目（generic_scraper, ~250行）
+    ↓ 2小时能读完 + 能改
+</code></pre><br><p><strong>GA 的三大教学优势：</strong></p><br><p>1. <strong>极简</strong>：核心只有 3000 行，是其他框架的 1/10</p><p>2. <strong>完整</strong>：从需求到部署，全链条可见</p><p>3. <strong>可改</strong>：改一行代码就能看到效果，正反馈快</p><br><p>---</p><br><h2>📌 第六章：接着学什么</h2><br><table><thead><tr><th>如果感兴趣</th><th>可以看</th></tr></thead><tbody><tr><td>这个爬虫的"大脑"——Agent Loop</td><td>`agent.py` 的核心循环</td></tr><tr><td>GA 怎么做到自我进化</td><td>`memory/` 文件夹下的 SOP 文件</td></tr><tr><td>这个爬虫依赖的底层工具</td><td>`TMWebDriver.py`</td></tr><tr><td>前端界面怎么写出来的</td><td>`frontend.html`</td></tr><tr><td>数据怎么存到数据库</td><td>`models.py` 的 SQLite 操作</td></tr></tbody></table><br><p>---</p><br><blockquote>**最后的话**</blockquote><p>></p><blockquote>这个指南的名字叫"从零看懂"，是因为我相信：</blockquote><blockquote>**看懂一个200行的真实项目，比背100个语法点更有用。**</blockquote><p>></p><blockquote>generic_scraper 是一个真实的、运行中的、有用的软件。</blockquote><blockquote>你看懂了它，就等于看懂了：</blockquote><blockquote>- 一个 Web 应用是怎么工作的（前端→API→后端→浏览器）</blockquote><blockquote>- 代码是怎么组织的（模型→逻辑→接口）</blockquote><blockquote>- 一个软件是怎么从想法变成现实的（需求→设计→编码→测试→部署）</blockquote><p>></p><blockquote>这就是编程的起点。🚀</blockquote><br>
+  
+  <br><br>
+  <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
+  <p style="color:var(--text-2);font-size:13px;text-align:center;">
+    由 GenericAgent · html_format_sop 生成 · 2026-05-10<br>
+    基于 <a href="https://github.com/omerakben/html-artifacts" style="color:var(--accent);">omerakben/html-artifacts</a> 决策门
+  </p>
+</div>
+  </div>
+  <div class="footer">
+    <p>Posted on <a href="https://zhangpinkdolphin.github.io">zhangPinkdolphin.github.io</a></p>
+    <p style="margin-top:8px;">Powered by <a href="https://github.com/zhangPinkdolphin/GenericAgent">GenericAgent</a></p>
+  </div>
+</div>
+</body>
+</html>
