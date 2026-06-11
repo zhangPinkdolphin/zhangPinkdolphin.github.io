@@ -6,26 +6,51 @@
 <title>zhangPinkdolphin</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; 
-         display: flex; flex-direction: column; align-items: center; justify-content: center; 
-         min-height: 100vh; text-align: center; padding: 20px; }
-  h1 { font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea, #764ba2);
-       -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .subtitle { color: #888; font-size: 1.1rem; margin-bottom: 2rem; }
-  .links { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
-  .links a { color: #667eea; text-decoration: none; padding: 8px 20px; border: 1px solid #333;
-             border-radius: 8px; transition: all 0.3s; }
-  .links a:hover { border-color: #667eea; background: rgba(102, 126, 234, 0.1); }
-  footer { margin-top: 3rem; color: #555; font-size: 0.85rem; }
+  body { font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', 'Microsoft YaHei', sans-serif; background: #0f0f1a; color: #e0e0e0; 
+         min-height: 100vh; padding: 20px; }
+  .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
+  .hero { text-align: center; margin-bottom: 60px; }
+  h1 { font-size: 2.8rem; font-weight: 700; background: linear-gradient(135deg, #667eea, #764ba2);
+       -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .subtitle { color: #6b6b8a; font-size: 1.1rem; margin-bottom: 24px; }
+  .links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .links a { color: #667eea; text-decoration: none; padding: 8px 20px; border: 1px solid #1e1e32;
+             border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; }
+  .links a:hover { border-color: #667eea; background: rgba(102, 126, 234, 0.08); }
+  .section-title { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; color: #6b6b8a; margin-bottom: 20px; font-weight: 600; }
+  .article-list { display: flex; flex-direction: column; gap: 12px; }
+  .article-item { display: flex; align-items: center; gap: 16px; padding: 16px 20px; 
+                  background: #12121f; border: 1px solid #1e1e32; border-radius: 10px;
+                  text-decoration: none; transition: all 0.3s; }
+  .article-item:hover { border-color: #667eea; background: rgba(102,126,234,0.04); transform: translateX(4px); }
+  .article-item .date { color: #6b6b8a; font-size: 0.8rem; min-width: 80px; }
+  .article-item .title { color: #e0e0e0; font-size: 0.95rem; font-weight: 500; flex: 1; }
+  .article-item .arrow { color: #6b6b8a; font-size: 1.2rem; }
+  .article-item:hover .arrow { color: #667eea; }
+  footer { text-align: center; margin-top: 60px; color: #4a4a6a; font-size: 0.85rem; }
 </style>
 </head>
 <body>
-  <h1>zhangPinkdolphin</h1>
-  <p class="subtitle">Developer · AI · GenericAgent</p>
-  <div class="links">
-    <a href="https://github.com/zhangPinkdolphin">GitHub</a>
-    <a href="https://github.com/zhangPinkdolphin/GenericAgent">GenericAgent</a>
+<div class="container">
+  <div class="hero">
+    <h1>zhangPinkdolphin</h1>
+    <p class="subtitle">Developer · AI · GenericAgent</p>
+    <div class="links">
+      <a href="https://github.com/zhangPinkdolphin">GitHub</a>
+      <a href="https://github.com/zhangPinkdolphin/GenericAgent">GenericAgent</a>
+    </div>
   </div>
-  <footer>🚀 Coming soon</footer>
+
+  <div class="section-title">📝 Articles</div>
+  <div class="article-list">
+    <a href="/articles/salient-mining-sop-creation.html" class="article-item">
+      <span class="date">2026-06-11</span>
+      <span class="title">Salient Mining SOP 创作过程模拟</span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <footer>🚀 More coming soon</footer>
+</div>
 </body>
 </html>
