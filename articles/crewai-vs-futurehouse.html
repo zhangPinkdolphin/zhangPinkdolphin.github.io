@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrewAI vs FutureHouse — 两条通往「智能」的路 — zhangPinkdolphin</title>
+<style>
+  :root {
+    --bg: #0a0a14; --card: #12121f; --surface: #1a1a2e;
+    --border: #1e1e32; --text: #d0d0e0; --muted: #6b6b8a;
+    --accent: #667eea; --accent2: #764ba2; --green: #4ade80;
+    --amber: #fbbf24; --red: #f87171; --blue: #60a5fa;
+    --purple: #bc8cff; --orange: #fb923c;
+    --code-bg: #060610;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.8; }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+         background: rgba(10,10,20,0.85); backdrop-filter: blur(12px);
+         border-bottom: 1px solid var(--border); padding: 14px 40px;
+         display: flex; align-items: center; gap: 12px; }
+  .nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .nav a:hover { color: var(--accent); }
+  .nav .sep { color: var(--border); }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  .article-body { padding: 100px 0 40px; }
+  h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2));
+       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+       margin-bottom: 0.3em; line-height: 1.3; }
+  h2 { font-size: 1.5rem; color: var(--accent); margin: 1.8em 0 0.6em;
+       border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+  h3 { font-size: 1.15rem; color: var(--green); margin: 1.2em 0 0.4em; }
+  h4 { font-size: 1rem; color: var(--amber); margin: 0.8em 0 0.3em; }
+  p { margin: 0.6em 0; color: var(--text); }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 2em; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+        padding: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 1em 0; }
+  code { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; }
+  p > code, li > code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  .card, .section-card { background: var(--card); border: 1px solid var(--border);
+                         border-radius: 12px; padding: 20px; margin: 1em 0; }
+  .summary-box { background: rgba(102,126,234,0.07); border: 1px solid rgba(102,126,234,0.25);
+                 border-radius: 12px; padding: 16px 20px; margin: 1em 0; }
+  .summary-box strong { color: var(--accent); }
+  .highlight-box { display: inline-block; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.25);
+                   border-radius: 8px; padding: 2px 10px; color: var(--green); font-size: 0.8rem; }
+  .highlight-box.purple { background: rgba(118,75,162,0.1); border-color: rgba(118,75,162,0.25); color: var(--accent2); }
+  .callout { background: rgba(251,191,36,0.06); border-left: 3px solid var(--amber);
+             border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+  .callout p { font-size: 0.92rem; color: #c0b080; }
+  .what { color: var(--blue); font-weight: 600; }
+  .why { color: var(--amber); font-weight: 600; }
+  .how { color: var(--green); font-weight: 600; }
+  .tag, .badge { display: inline-block; background: rgba(102,126,234,0.12); color: var(--accent);
+                 padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; margin: 2px 4px 2px 0; }
+  ul, ol { padding-left: 1.5em; margin: 0.5em 0; }
+  li { margin: 0.3em 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.9rem; }
+  th { text-align: left; padding: 10px 12px; background: rgba(102,126,234,0.08);
+       border-bottom: 1px solid var(--border); color: var(--accent); font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  blockquote { border-left: 3px solid var(--accent); background: rgba(102,126,234,0.06);
+               padding: 12px 16px; margin: 1em 0; border-radius: 0 8px 8px 0; }
+  blockquote p { color: #b0b0c8; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+         padding: 20px 24px; margin-bottom: 32px; }
+  .toc a { display: block; padding: 3px 0; font-size: 0.9rem; }
+  .toc a.l2 { padding-left: 1.4em; font-size: 0.85rem; color: #9a9ac0; }
+  .toc a.l3 { padding-left: 2.8em; font-size: 0.82rem; color: #7d7da5; }
+  .footer { text-align: center; padding: 60px 0 40px; color: var(--muted); font-size: 0.85rem; }
+  img { max-width: 100%; border-radius: 8px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 1em 0; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat .num { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2));
+               -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat .label { color: var(--muted); font-size: 0.8rem; margin-top: 4px; }
+  @media (max-width: 640px) { .nav { padding: 12px 16px; } h1 { font-size: 1.5rem; } .container { padding: 0 16px; } }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="/">← 首页</a>
+  <span class="sep">/</span>
+  <span style="color:var(--muted);font-size:0.9rem;">CrewAI vs FutureHouse</span>
+</div>
+<div class="container">
+  <div class="article-body">
+<h1>⚗️ 两条通往「智能」的路：CrewAI 与 FutureHouse / Edison Scientific 全景解析</h1>
+<p class="meta">多智能体协作框架 vs AI 科学家 · 最新进展 + 实践案例研究 · 更新于 2026-08-02</p>
+
+<div class="toc">
+<h3>📑 目录</h3>
+<a href="#sec1">一、为什么把这两个放在一起？</a>
+<a href="#sec2">二、CrewAI：通用多智能体编排框架</a>
+<a href="#sec2" class="l2">2.1 它是什么</a>
+<a href="#sec2" class="l2">2.2 架构：Flows + Crews</a>
+<a href="#sec2" class="l2">2.3 2026 年最新进展</a>
+<a href="#sec2" class="l2">2.4 实践案例</a>
+<a href="#sec2" class="l2">2.5 需要留意的地方</a>
+<a href="#sec3">三、FutureHouse / Edison Scientific：AI 科学家</a>
+<a href="#sec3" class="l2">3.1 它是什么 + 关键时间线</a>
+<a href="#sec3" class="l2">3.2 Robin：登上 Nature 的全自动科研系统</a>
+<a href="#sec3" class="l2">3.3 Kosmos：新一代 AI 科学家</a>
+<a href="#sec3" class="l2">3.4 实践案例</a>
+<a href="#sec3" class="l2">3.5 质疑与局限</a>
+<a href="#sec4">四、更新版对比表</a>
+<a href="#sec5">五、观察与思考</a>
+<a href="#sec6">六、参考来源</a>
+</div>
+
+<!-- ===================== 第一章 ===================== -->
+<h2 id="sec1">一、为什么把这两个放在一起？</h2>
+
+<p>CrewAI 和 FutureHouse 经常被并排讨论，因为它们在同一个大叙事里：<strong>「多智能体（Multi-Agent）」会成为 AI 的下一个应用形态</strong>。两者都让多个自主 AI 智能体分工协作，但如果你把「智能体」换成「员工」，区别立刻就清晰了——</p>
+
+<div class="summary-box">
+<strong>一句话总结：</strong>CrewAI 是「怎么让多个 Agent 协作」的<strong>通用开发工具</strong>——像导演一样编排 AI 员工团队去完成任何自动化任务；FutureHouse 是「把整个科研流程自动化」的<strong>领域研究项目</strong>——目标是造出能自己提出假设、设计实验、分析数据、得出结论的 AI 科学家。
+</div>
+
+<p>所以这不是「谁更好」的对比，而是两条<strong>不同路线</strong>的对比：一条做平台，一条做应用；一条面向所有行业，一条深耕生物学与药物研发；一条以「执行量」论英雄，一条以「发现数量与可复现性」论成败。</p>
+
+<!-- ===================== 第二章 ===================== -->
+<h2 id="sec2">二、CrewAI：通用多智能体编排框架</h2>
+
+<h3 id="sec2.1">2.1 它是什么</h3>
+
+<p>CrewAI 是一个<strong>开源的 Python 框架</strong>，2024 年 1 月由 João Moura 推出，从零构建、不依赖 LangChain。核心思路：为每个智能体定义<code>Role（角色）</code>、<code>Goal（目标）</code>、<code>Tools（工具）</code>，让它们像人类团队一样分工协作。比如「研究员 → 作家 → 审核员」三智能体流水线自动产出市场分析报告。</p>
+
+<p>它有两副面孔：底层是免费开源的编排框架，上层是面向企业的 Agent 平台（AMP / Crew Studio / Discovery）。官方口径的几组数据：</p>
+
+<div class="stat-grid">
+  <div class="stat"><div class="num">~55K</div><div class="label">GitHub Stars（社区规模）</div></div>
+  <div class="stat"><div class="num">2B+</div><div class="label">过去一年 agentic 执行次数（官方口径）</div></div>
+  <div class="stat"><div class="num">60-63%</div><div class="label">自称《财富》500 强使用比例（营销口径）</div></div>
+  <div class="stat"><div class="num">100K+</div><div class="label">认证开发者</div></div>
+</div>
+
+<blockquote><p>数据说明：2B 次执行与 63% 均为 CrewAI 官方自述（官网「Used by 63% of the Fortune 500」，第三方口径约 60%），建议当作「官方宣称」而非独立审计数据。</p></blockquote>
+
+<h3 id="sec2.2">2.2 架构：Flows + Crews</h3>
+
+<p>CrewAI 的核心设计是<strong>双层架构</strong>，这也是它区别于其他框架最明显的地方：</p>
+
+<div class="card">
+<p><span class="what">Flows（流程）</span>——确定性骨架。负责应用的整体结构：步骤顺序、状态管理、循环、条件分支、错误处理、人机协作节点。它是<strong>事件驱动</strong>的，且支持<code>@persist()</code>持久化、结构化/非结构化状态（Pydantic 模型 / 字典），甚至能导出为独立代码。</p>
+<p><span class="why">Crews（团队）</span>——自主执行单元。由多个带角色、工具、记忆的智能体组成，负责 Flow 委派下来的「需要判断力」的任务。</p>
+<p><span class="how">设计哲学</span>——把「可预测的流程控制」和「不可预测的推理任务」<strong>刻意分离</strong>：确定性部分交给 Flow，智能部分交给 Crew。官方认为，这是 2B 次执行中跑出成绩的团队共同特征。</p>
+</div>
+
+<p>此外还有面向生产的安全治理：guardrails（护栏）、human-in-the-loop（人在环）、层级 manager-worker 架构、任务级工具权限、可追踪的执行记录——这些是它主打企业市场的底气。</p>
+
+<h3 id="sec2.3">2.3 2026 年最新进展</h3>
+
+<p>今年 CrewAI 的动作非常密集，我按时间线梳理：</p>
+
+<table>
+<tr><th>时间</th><th>动态</th><th>意义</th></tr>
+<tr><td>2026-01</td><td>官方发布《Lessons From 2 Billion Agentic Workflows》</td><td>披露累计约 20 亿次执行；总结三条生产经验：信任靠「从 100% 人工审核逐步下放」挣得、确定性流程与智能体分工、生产级全栈（可观测性/审计/人在环）</td></tr>
+<tr><td>2026-03</td><td>与 NVIDIA NemoClaw 深度合作</td><td>面向 OpenClaw 时代「自进化、长时运行」智能体，CrewAI 负责编排，NVIDIA OpenShell Runtime 负责基础设施级安全沙箱；联合发布 AI-Q 研究蓝图（Orchestrator + Planner + Researcher）</td></tr>
+<tr><td>2026-05-04</td><td>发布 Discovery 引擎</td><td>用平台积累的「数十亿次执行数据」反哺选型：输入企业业务信息，几分钟内输出「该自动化什么、怎么自动化」的优先级清单，直击企业「不知道建什么 Agent」的痛点</td></tr>
+<tr><td>2026-06</td><td>深化 Snowflake 生态合作</td><td>Agent 可直接连接 Snowflake Cortex 与托管 MCP Server，数据在受治理边界内被 Agent 使用</td></tr>
+<tr><td>2026-07</td><td>Crew Studio 企业平台大扩展</td><td>事件驱动 Flows、确定性执行、Router 条件分支节点、单/多智能体 crew 节点、企业级可复用智能体库；连接器超 <strong>1,000 个</strong>（CRM/工单/IM/研发工具）；托管认证、可导出代码、内置测试与追踪</td></tr>
+<tr><td>2026-07-07</td><td>v1.15.2 发布</td><td>如「在 Crew 向导中动态拉取最新 LLM 模型」「支持内联技能定义」等</td></tr>
+</table>
+
+<p>不难看出，CrewAI 的战略重心已经从「开源框架」转向「<strong>企业级编排与治理平台</strong>」：Discovery 解决「建什么」，Crew Studio 解决「怎么建、怎么管」，NemoClaw/Snowflake 解决「怎么安全地跑」。</p>
+
+<h3 id="sec2.4">2.4 实践案例</h3>
+
+<h4>DocuSign：销售管线加速（官方披露的明星案例）</h4>
+<div class="card">
+<p>用 5 个智能体（Identifier / Researcher / Composer / Validator + Orchestrator）嵌入一个<strong>确定性 Flow</strong>：识别线索 → 研究客户 → 撰写个性化触达 → 质量校验 → 发送（官方叫 3P：Productivity / Personalization / Pipeline）。</p>
+<p>校验层有三道：<code>LLM-as-judge</code> 质量评审 + 对照源材料的幻觉检查 + 基于 API 的质量评分，出问题能精确定位是哪一层拦截的。结果是触达周转时间显著缩短、打开率/回复率/转化率提升；据官方称，相比此前图式（Graph）架构的实现，代码量减少约 <strong>14 倍</strong>。</p>
+</div>
+
+<h4>AB InBev：每年 300 亿美元决策交给 AI</h4>
+<p>官方博客提到，AB InBev 每年约 <strong>$30B</strong> 的决策经由 AI 支持，目前在 CrewAI AMP 平台上已有数十个生产用例，带来数百万美元级别的财务影响。</p>
+
+<h4>某人力资源服务公司：「Andy」工单智能体</h4>
+<p>每月 3,000+ 员工工单，合规团队不堪重负。上线「Andy」后并不急着全自动——先是<strong>100% 人工审核</strong>（AI 起草回复、标注相关条款、标记边缘案例），跑了几千次后质量得到信任，逐步下放到 <strong>50%+ 无人审核</strong>。这是「信任阶梯」的教科书式案例。</p>
+
+<h4>更多客户与社区案例</h4>
+<ul>
+  <li>官方披露的客户/合作方：<strong>PepsiCo、Johnson &amp; Johnson、PwC、美国国防部（DoD）、NTT Data、Experian、BDO</strong> 等</li>
+  <li>开源社区：基于 CrewAI + Streamlit 的多智能体旅行规划助手（2026-02，GitHub）；三智能体邮件分诊 cookbook（Scalekit，2026-06：扫描 → 按优先级分类 → 起草回复）</li>
+  <li>学术：IEEE 论文（2025-12）用 GPT-4-mini + CrewAI 实现客服工单多智能体自动化（数据摄入 → 工单分类 incident/request/change/problem → 生成解决方案）</li>
+</ul>
+
+<p><strong>小结：</strong>CrewAI 的实践案例高度集中在「流程自动化」——工单、销售、研究、内容生产。衡量标准是处理量、代码量、转化率这类业务指标。</p>
+
+<h3 id="sec2.5">2.5 需要留意的地方</h3>
+<div class="callout">
+<p>① 2B 执行量、63% Fortune 500 都是官方口径，无独立审计；② 与 AutoGen/AG2、LangGraph 竞争激烈，官方博客多次「吐槽」图式架构（调试噩梦），本质是框架路线之争；③ 生态里大量真实生产案例发生在「有预算做治理」的大企业，中小团队更多停留在原型阶段。</p>
+</div>
+
+<!-- ===================== 第三章 ===================== -->
+<h2 id="sec3">三、FutureHouse / Edison Scientific：AI 科学家</h2>
+
+<h3 id="sec3.1">3.1 它是什么 + 关键时间线</h3>
+
+<p>FutureHouse 是 2023 年在旧金山成立的<strong>非营利研究机构（501(c)(3)）</strong>，创始人是物理学家/生物工程师 <strong>Sam Rodriques</strong>（TIME 100 AI 2025 入选者）和化学 AI 专家 <strong>Andrew White</strong>（ChemCrow、PaperQA 作者）。目标宏大：<strong>十年内构建出「AI 科学家」</strong>。项目早期就获得了前 Google CEO <strong>Eric Schmidt</strong> 等人的支持。</p>
+
+<table>
+<tr><th>时间</th><th>事件</th></tr>
+<tr><td>2023</td><td>FutureHouse 成立；持续开源 PaperQA 等科研智能体</td></tr>
+<tr><td>2025-05</td><td>多智能体科研系统 Robin 预印本发布，宣布发现致盲眼病 dAMD 潜在新药</td></tr>
+<tr><td>2025-11</td><td><strong>战略分拆</strong>：非营利 FutureHouse 专注基础生物学研究；营利性 <strong>Edison Scientific</strong> 负责商业化，发布新一代 AI 科学家 <strong>Kosmos</strong></td></tr>
+<tr><td>2025-12</td><td>Edison 完成 <strong>$70M seed</strong>（Triatomic Capital、Spark Capital 领投，估值约 $250M）</td></tr>
+<tr><td>2026-05-19</td><td>Robin 论文登上 <strong>Nature</strong>；同天宣布 <strong>Incyte</strong> 战略合作，将 Kosmos 嵌入药企研发</td></tr>
+<tr><td>2026 年中</td><td>官方口径：Kosmos 自上线以来已产出 <strong>10,000+</strong> 项新发现（Milken 全球会议 2026 披露）</td></tr>
+</table>
+
+<h3 id="sec3.2">3.2 Robin：登上 Nature 的全自动科研系统</h3>
+
+<p>2026 年 5 月 19 日，FutureHouse 在 <em>Nature</em> 发表论文《A multi-agent system for automating scientific discovery》（s41586-026-10652-y），正式报道全球首个<strong>全自动科学发现闭环</strong>系统 Robin（2025 年 5 月曾以预印本形式发布）。论文正文中的全部假设、实验方向、数据分析与图表，均由 Robin 完成。</p>
+
+<div class="card">
+<p><span class="what">Crow（乌鸦）</span>——快速扫描数百篇文献，抓取关键信息，确定实验策略与候选方案；</p>
+<p><span class="what">Falcon（猎鹰）</span>——深度文献综述，生成全面报告，评估每一条候选策略；</p>
+<p><span class="what">Finch（雀鸟）</span>——自主分析实验数据：流式细胞术、RNA-seq 都能自己写代码、画图、给出统计结论。</p>
+</div>
+
+<h4>实战：挑战「视力杀手」dAMD</h4>
+<ul>
+  <li><strong>定位机制：</strong>读数百篇眼科论文后提出——干性年龄相关黄斑变性（dAMD）的关键是视网膜色素上皮（RPE）细胞吞噬功能受损，代谢废物堆积毒害感光细胞；增强吞噬能力是突破口</li>
+  <li><strong>筛选老药：</strong>在药物库交叉比对，提名一批「老药新用」候选，人类科学家体外验证命中率不俗</li>
+  <li><strong>关键发现：</strong><code>Ripasudil</code>（ROCK 抑制剂，原用于青光眼）与 <code>KL001</code>（隐花色素稳定剂，调控昼夜节律）均能显著增强 RPE 吞噬——后者为首次报道</li>
+  <li><strong>机制破译：</strong>面对 Y-27632（另一 ROCK 抑制剂）的实验数据，Robin 自主提议 RNA-seq 测序，发现药物通过重塑细胞骨架与调控自噬加速废物清理，并捕捉到被学界长期忽略的 <code>ABCA1</code> 基因显著上调——为 dAMD 新靶向疗法打开方向</li>
+</ul>
+
+<div class="stat-grid">
+  <div class="stat"><div class="num">800+</div><div class="label">阅读与总结的论文数</div></div>
+  <div class="stat"><div class="num">&lt;2h</div><div class="label">Robin 完成闭环耗时</div></div>
+  <div class="stat"><div class="num">872-937h</div><div class="label">人类专家等效工作量（约 4 个月）</div></div>
+</div>
+
+<p>论文估算，人类完成同等工作平均需要 872-937 小时，而 Robin 用了不到 2 小时。这意味着很多「老药新用」的宝藏不再需要蒙尘十年，AI 可以快速跨越文献鸿沟。</p>
+
+<h3 id="sec3.3">3.3 Kosmos：新一代 AI 科学家</h3>
+
+<p>Kosmos 是 Edison Scientific 的商业旗舰（2025-11 上线），定位是「与研发团队协作的 AI 科学家」——它会在一次最长 12 小时的运行里完成相当于人类研究员约 6 个月的工作。</p>
+
+<div class="stat-grid">
+  <div class="stat"><div class="num">1,500</div><div class="label">单次精读论文数</div></div>
+  <div class="stat"><div class="num">42,000</div><div class="label">自动生成并执行的代码行数</div></div>
+  <div class="stat"><div class="num">166/36</div><div class="label">数据分析轮次 / 文献综述迭代</div></div>
+  <div class="stat"><div class="num">79.4%</div><div class="label">独立评审的结论准确率</div></div>
+</div>
+
+<p>Kosmos 采用「结构化世界模型」，将数百个智能体的信息拧成一股绳，即便输入上千万 token 的文献也能专注核心研究问题；自主循环架构让它从「被动执行指令」变成「主动规划研究」。每条结论都可<strong>溯源到具体代码或原文</strong>，并输出下一步分析计划，供下一轮循环使用。</p>
+
+<h4>评估成绩（New Scientist 报道）</h4>
+<ul>
+  <li>Edison 请至少博士级理解力的科学家评审 Kosmos 报告的 102 条陈述：<strong>79.4% 总体成立</strong>（数据分析类 85.5%、文献类 82.1%、原创综合结论 57.9%）</li>
+  <li>7 位科学家平均估算 20 轮循环 ≈ 人类 6 个月研究工作量</li>
+  <li>声称有 <strong>7 项发现</strong>经外部专家用独立数据/方法验证：4 项原创 + 3 项复现</li>
+</ul>
+
+<h4>几项代表性发现</h4>
+<div class="card">
+<p>🫀 <strong>SOD2 与心肌纤维化：</strong>通过基因数据建模，为「血液中 SOD2（超氧化物歧化酶 2）越多、心脏疤痕越少」提供人群基因组学层面的新证据，把小鼠实验结论往临床应用推进一步。</p>
+<p>🧠 <strong>阿尔茨海默病新线索：</strong>发现随年龄增长，内嗅皮层神经元的磷脂翻转酶基因表达下降，且在人类患者数据中得到验证，与 tau 蛋白病理出现时间同步。</p>
+<p>☀️ <strong>钙钛矿太阳能电池：</strong>精准找到失效阈值——该结论来自其训练数据截止之后发表的论文，等于「闭卷考试」式复现。</p>
+<p>🧬 <strong>低温小鼠大脑：</strong>独立验证一份未发表手稿的结论（核苷酸代谢是关键通路），且该预印本在其完成分析后才发布。</p>
+</div>
+
+<p><strong>商业化：</strong>Kosmos 单次运行定价 <code>200 积分</code>（约 $200）；学术用户每月 <code>650 积分免费</code>；订阅 $200/月；常规 Agent（Analysis / Literature 等）对订阅用户免费。这也是「免费基础层 + 付费高吞吐」模式的落地。</p>
+
+<h3 id="sec3.4">3.4 实践案例</h3>
+
+<ul>
+  <li><strong>Incyte 战略合作（2026-05-19）：</strong>美国生物制药公司 Incyte 将 Kosmos 嵌入药物研发全流程，初期聚焦<strong>靶点发现与验证、转化生物学</strong>，用实验/临床/生物标志物数据支持决策；双方的理念是让药企数据变成「复利资产」——数据不再只是被分析，而是持续喂养 AI、形成反馈闭环，提升未来项目决策质量</li>
+  <li><strong>Robin → dAMD 眼病新药：</strong>Nature 论文验证的完整科研闭环（见 3.2）</li>
+  <li><strong>PaperQA 开源：</strong>Edison 在融资公告同日发布 PaperQA 2.0——旗舰开源文献智能体，延续「开源科学」承诺</li>
+  <li><strong>学术生态：</strong>Fellowship 项目向生物/生化领域学者开放 Kosmos 与 AI-for-Science 社区实践</li>
+</ul>
+
+<p><strong>小结：</strong>FutureHouse / Edison 的实践案例不是「流程自动化」，而是<strong>科学发现本身</strong>——从 Nature 论文到药企研发管线，衡量标准是「是否发现并验证了新东西」。</p>
+
+<h3 id="sec3.5">3.5 质疑与局限</h3>
+
+<p>科学界对 Kosmos 的反应并非一边倒喝彩，New Scientist 报道了相当尖锐的批评：</p>
+
+<div class="callout">
+<p>⚠️ 布里斯托大学 <strong>Fergus Hamilton</strong>：SOD2「发现」算不上首创（小鼠中已知），人群层面的因果推断存在方法学瑕疵；Kosmos 尝试运行的部分分析代码直接失败、被系统忽略，且数据被过度预处理——「可能只完成了任务的 10%」。帝国理工 <strong>Ben Glocker</strong> 提醒：应谨慎对待 AI 科学家的「自主使用」，其失败模式还不清楚。Bentley 大学 <strong>Noah Giansiracusa</strong> 则强调：科学不止数据驱动，还有深度思考与创造力。</p>
+</div>
+
+<p>Edison 自己也承认局限：约 <strong>30% 的运行会陷入局部最优解</strong>（盯着小发现不放）；跨领域问题准确率约 <strong>58%</strong>；官方建议关键课题<strong>并行运行 3-5 次</strong>交叉验证。Rodriques 的回应也值得记录：「我很接受部分发现可能是错的或被证伪——这正是科学。它引发如此成熟的批评，反而说明系统的力量。」他把 Kosmos 定位为<strong>协作者而非替代者</strong>。</p>
+
+<!-- ===================== 第四章 ===================== -->
+<h2 id="sec4">四、更新版对比表</h2>
+
+<table>
+<tr><th style="min-width:120px;">维度</th><th>CrewAI</th><th>FutureHouse / Edison Scientific</th></tr>
+<tr><td><strong>定位</strong></td><td>通用多智能体<strong>开发框架</strong> + 企业编排平台</td><td>特定领域的 <strong>AI 科学家</strong>（非营利研究 + 营利商业化）</td></tr>
+<tr><td><strong>目标</strong></td><td>让开发者/企业轻松构建、部署、治理 Agent 团队</td><td>用 AI 自动化并加速生物学等基础科学的发现</td></tr>
+<tr><td><strong>核心产物</strong></td><td>开源 Python 框架 + AMP / Crew Studio / Discovery</td><td>Robin（科研系统）、Kosmos（商业 AI 科学家）、PaperQA（开源文献智能体）</td></tr>
+<tr><td><strong>架构</strong></td><td>Flows（确定性流程）+ Crews（自主团队）双层</td><td>Robin：Crow/Falcon/Finch 多智能体闭环；Kosmos：结构化世界模型 + 数百智能体</td></tr>
+<tr><td><strong>代表性里程碑</strong></td><td>20 亿次执行；Discovery 引擎；Crew Studio；NVIDIA NemoClaw 合作</td><td>Nature 论文（2026-05）；$70M seed；Incyte 合作；官方称 10,000+ 新发现</td></tr>
+<tr><td><strong>实践案例</strong></td><td>DocuSign、AB InBev、Andy 工单、PepsiCo、J&amp;J、PwC、DoD…</td><td>dAMD 新药（Ripasudil/KL001）、SOD2、阿尔茨海默新线索、Incyte 研发管线</td></tr>
+<tr><td><strong>性质/商业模式</strong></td><td>开源 + 企业订阅</td><td>非营利（FutureHouse）+ 营利（Edison，估值约 $250M）</td></tr>
+<tr><td><strong>主要用户</strong></td><td>开发者、企业 IT、自动化团队</td><td>科研人员、药企、生物技术公司</td></tr>
+<tr><td><strong>衡量成功</strong></td><td>部署数、执行量、业务指标（转化率/处理量）</td><td>发现数量、可复现性、临床转化</td></tr>
+<tr><td><strong>风险与短板</strong></td><td>生产可靠性、安全治理、框架路线之争</td><td>可重复性、方法学质量、30% 局部最优、原创综合准确率 58%</td></tr>
+</table>
+
+<!-- ===================== 第五章 ===================== -->
+<h2 id="sec5">五、观察与思考</h2>
+
+<h3>① 殊途同归，但分工不同</h3>
+<p>两者都把「多智能体」当作下一代 AI 的形态，但 CrewAI 把 Agent 当作<strong>可编排的软件组件</strong>，任何流程都能装配；FutureHouse 把 Agent 当作<strong>科研流程的执行者</strong>，围绕「假设 → 实验 → 分析 → 验证」构建领域闭环。前者赢在通用性，后者赢在纵深。</p>
+
+<h3>② 两者其实可以互相借鉴</h3>
+<ul>
+  <li>用 CrewAI 编排科研 Agent 团队（文献 → 分析 → 写报告）在社区里已经有人做——「AI 科学家」也可以用通用框架搭出来；</li>
+  <li>Kosmos 的「全溯源」理念（每个结论对应代码或原文）恰恰是企业在 Agent 生产中最大的信任缺口，值得所有 Agent 平台学习；</li>
+  <li>而 Kosmos 的「结构化世界模型」在长上下文聚焦上的经验，对任何多智能体系统都有参考价值。</li>
+</ul>
+
+<h3>③ 「人类在环」都是关键变量</h3>
+<p>CrewAI 的 Andy 案例：从 100% 人工审核降到 50% 自主，信任是<strong>挣来的</strong>；Kosmos 官方建议关键课题并行跑 3-5 次交叉验证，Rodriques 也强调「你仍然要亲自读、亲自验证」。两个系统在「自主」的表象下，都把人类当作最终裁判——这可能是 2026 年所有 Agent 系统的共同底线。</p>
+
+<h3>④ 未来走向</h3>
+<p>CrewAI 正在从「建 Agent 的框架」走向「<strong>告诉你建什么、并帮你管到生产</strong>」的发现引擎；FutureHouse/Edison 正在从「复现与延伸」走向「原创发现与临床转化」。当平台获得领域纵深、科研系统获得通用编排能力时，两条路会越来越近。</p>
+
+<blockquote><p>最后借用 New Scientist 报道里的一句话收尾：<strong>「科学不止是数据驱动的方法，还有深度思考与创造力——不应该因为我们可以自动化的那部分科学更适合 AI，就忽视另一部分。」</strong></p></blockquote>
+
+<!-- ===================== 第六章 ===================== -->
+<h2 id="sec6">六、参考来源</h2>
+
+<ol style="font-size:0.88rem; color:#9a9ac0;">
+  <li>CrewAI Blog — <a href="https://crewai.com/blog/lessons-from-2-billion-agentic-workflows">Lessons From 2 Billion Agentic Workflows</a>（2026-01）</li>
+  <li>CrewAI Blog — <a href="https://crewai.com/blog/crewai-discovery">Introducing CrewAI Discovery</a>（2026-05-04）</li>
+  <li>CrewAI Blog — <a href="https://crewai.com/blog/orchestrating-self-evolving-agents-with-crewai-and-nvidia-nemoclaw">Orchestrating Self-Evolving Agents with CrewAI and NVIDIA NemoClaw</a>（2026-03）</li>
+  <li>TipRanks — <a href="https://fastly.tipranks.com/news/private-companies/crewai-deepens-enterprise-push-with-expanded-crew-studio-agentic-ai-platform">CrewAI Deepens Enterprise Push With Expanded Crew Studio</a>（2026-07-31）</li>
+  <li>CrewAI — <a href="https://crewai.com/pricing">Pricing（63% of Fortune 500 口径）</a>；AgentMarketCap — <a href="https://agentmarketcap.ai/blog/2026/04/06/crewai-stealth-dominance-10m-agent-runs-fortune-500-open-source">CrewAI's Stealth Dominance</a>（2026-04）</li>
+  <li>Nature — <a href="https://www.nature.com/articles/s41586-026-10652-y">A multi-agent system for automating scientific discovery</a>（2026-05-19）</li>
+  <li>澎湃新闻 — <a href="https://m.thepaper.cn/newsDetail_forward_33227000">Nature：首个全自动 AI 科学家 Robin</a>（2026-05-25）；<a href="https://m.thepaper.cn/newsDetail_forward_33539468">AI 当科研队友是什么体验？Kosmos 12 小时完成半年工作量</a>（2026-07-08）</li>
+  <li>New Scientist — <a href="https://www.newscientist.com/article/2503516-ai-scientist-claimed-to-do-six-months-of-research-in-just-a-few-hours/">AI scientist claimed to do six months of research in just a few hours</a>（2025-11-06）</li>
+  <li>Incyte 新闻稿 — <a href="https://investor.incyte.com/news-releases/news-release-details/incyte-and-edison-scientific-announce-strategic-collaboration">Incyte and Edison Scientific Collaboration</a>（2026-05-19）</li>
+  <li>Edison Scientific — <a href="https://edisonscientific.com/news/we-raised-70m-to-accelerate-science">We Raised $70M to Accelerate Science</a>（2025-12-18）；Milken Institute — <a href="https://milkeninstitute.org/events/global-conference-2026/speakers/samuel-rodriques">Sam Rodriques speaker bio</a></li>
+  <li>FutureHouse — <a href="https://www.futurehouse.org/about">We're building an AI scientist</a>；TIME 100 AI — <a href="https://time.com/collections/time100-ai-2025/7305817/sam-rodriques/">Sam Rodriques</a></li>
+</ol>
+
+<!-- Footer -->
+<div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: .85em; text-align: center;">
+  <p>CrewAI vs FutureHouse 全景解析 · 更新于 2026-08-02</p>
+  <p>所有「官方宣称」数据均已标注口径；引用来源见上文链接</p>
+</div>
+  </div>
+  <div class="footer">
+    <p>Posted on <a href="https://zhangpinkdolphin.github.io">zhangPinkdolphin.github.io</a></p>
+    <p style="margin-top:8px;">Powered by <a href="https://github.com/zhangPinkdolphin/GenericAgent">GenericAgent</a></p>
+  </div>
+</div>
+</body>
+</html>
